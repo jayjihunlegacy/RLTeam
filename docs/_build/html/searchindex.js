@@ -1,0 +1,1 @@
+Search.setIndex({envversion:47,filenames:["Tetris","index"],objects:{},objnames:{},objtypes:{},terms:{index:1,page:1,search:1},titles:["Tetris package","Welcome to Tetris&#8217;s documentation!"],titleterms:{authen:0,board:0,content:0,document:1,indic:1,main2:0,main:0,modul:0,packag:0,submodul:0,tabl:1,tetri:[0,1],tut:0,util:0,welcom:1}})
