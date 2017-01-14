@@ -28,30 +28,39 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Authen.py">
+    <Compile Include="mods\Authen.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Board.py">
+    <Compile Include="mods\Board.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interfaces\BoardInterface.py">
+    <Compile Include="mods\Interfaces\BoardInterface.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Machines\Machine.py">
+    <Compile Include="mods\Interfaces\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Machines\MCMachine.py">
+    <Compile Include="mods\Machines\Machine.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mods\Machines\MCMachine.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="main.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Machines\NeuralMachine.py" />
-    <Compile Include="Interfaces\RLInterface.py">
+    <Compile Include="mods\Machines\NeuralMachine.py" />
+    <Compile Include="mods\Interfaces\RLInterface.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interfaces\VisualInterface.py" />
-    <Compile Include="utils.py">
+    <Compile Include="mods\Interfaces\VisualInterface.py" />
+    <Compile Include="mods\Machines\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mods\utils.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mods\__init__.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="__init__.py">
@@ -59,8 +68,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Machines\" />
+    <Folder Include="mods\Interfaces\" />
+    <Folder Include="mods\Machines\" />
+    <Folder Include="mods\" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.4" />

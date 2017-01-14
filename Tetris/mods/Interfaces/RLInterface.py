@@ -1,13 +1,17 @@
-﻿from Interfaces.BoardInterface import *
-import numpy as np
-from Board import *
-from Authen import *
+﻿import numpy as np
 import datetime
 import _pickle
 import time
+from functools import reduce
+
+from .BoardInterface import *
+
+from ..Board import *
+from ..Authen import *
+
 from theano import function, scan, shared
 import theano.tensor as T
-from functools import reduce
+
 	
 class PGInterface(BoardInterface):
 	def __init__(self, name):
@@ -18,7 +22,7 @@ class PGInterface(BoardInterface):
 
 		#parameters
 		self.previous_R = []
-		self.R=0
+		self.G=0
 		
 		#gradient estimator
 		params = self.machine.params
@@ -55,7 +59,7 @@ class PGInterface(BoardInterface):
 	def initialize(self):
 		super().initialize()
 		self.experiences = []
-		self.R=0
+		self.G=0
 		
 	def _learn(self):
 		Rs = np.array([e[2] for e in self.experiences], dtype='float32')
@@ -88,15 +92,15 @@ class PGInterface(BoardInterface):
 			if self.isOver:
 				break
 		endTime=time.time()
-		if self.R != 0:
+		if self.G != 0:
 			print('Game over. Score : %i, Ticks : %i, Time elapsed : %.1fs'%(self.numLinesRemoved, self.board.t, endTime-startTime))
-		self.previous_R.append(self.R)
+		self.previous_R.append(self.G)
 		if len(self.previous_R) >= 5:
 			self.previous_R = self.previous_R[-5:]
 		self._learn()
 		learn_endTime = time.time()	
 		#print('Learned. Time elapsed : %.1fs'%(learn_endTime-endTime))
-		return self.R, self.board.t
+		return self.G, self.board.t
 
 '''
 class DQNRLInterface(RLInterface):
@@ -119,7 +123,7 @@ class DQNRLInterface(RLInterface):
 	def perform_action(self, action):
 		self.actionhistory.append((self.board.t, action))
 
-		s = self.phi(self.board.S())
+		s = self.board.phi()
 
 		def action2A(self, action):
 			result = [0, 0, 0, 0, 0]
@@ -128,7 +132,7 @@ class DQNRLInterface(RLInterface):
 
 		a = action2A(self, action)
 		r = self.board.T(action)
-		sprime = self.phi(self.board.S())
+		sprime = self.board.phi()
 
 		e = (s,a,r,sprime)
 
@@ -220,7 +224,7 @@ class PGInterface(RLInterface):
 		self.machine = machine
 		self.lr = 0.0001
 		self.previous_R = []
-		self.R=0
+		self.G=0
 		
 		params = self.machine.params
 		Xs = self.machine.s # (H, 2, 22, 10)
@@ -256,7 +260,7 @@ class PGInterface(RLInterface):
 	def initialize(self):
 		super().initialize()
 		self.experiences = []
-		self.R=0
+		self.G=0
 		
 	def OnTick(self):
 		pi = self.machine.Pi(self.board.S())
@@ -272,7 +276,7 @@ class PGInterface(RLInterface):
 		r = self.board.T(action)
 		e = (s, a, r)
 		self.experiences.append(e)
-		self.R += r
+		self.G += r
 
 	@abstractmethod
 	def _learn(self):
@@ -306,14 +310,14 @@ class PGInterface(RLInterface):
 			if self.isOver:
 				break
 		endTime=time.time()
-		if self.R != 0:
+		if self.G != 0:
 			print('Game over. Score : %i, Ticks : %i, Time elapsed : %.1fs'%(self.numLinesRemoved, self.board.t, endTime-startTime))
-		self.previous_R.append(self.R)
+		self.previous_R.append(self.G)
 		if len(self.previous_R) >= 5:
 			self.previous_R = self.previous_R[-5:]
 		self._learn()
 		learn_endTime = time.time()	
 		#print('Learned. Time elapsed : %.1fs'%(learn_endTime-endTime))
-		return self.R, self.board.t
+		return self.G, self.board.t
 =======
 '''

@@ -1,10 +1,12 @@
 ﻿import numpy as np
-from Board import *
-from Interfaces.BoardInterface import *
-from abc import ABCMeta, abstractmethod
-from Machines.Machine import *
 import _pickle
-from Authen import Env
+from abc import ABCMeta, abstractmethod
+
+from .Machine import *
+
+from ..Interfaces.BoardInterface import *
+from ..Board import *
+from ..Authen import Env
 
 import os
 env = Env()

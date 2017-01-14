@@ -1,0 +1,540 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tetris.mods.Board &mdash; Tetris  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="Tetris  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Tetris  documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Tetris.mods.Board</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">_pickle</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<div class="viewcode-block" id="Action"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.Action">[docs]</a><span class="k">class</span> <span class="nc">Action</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:class:`Action` defines a set of actions that can be performed.</span>
+
+<span class="sd">	Actions involves :</span>
+
+<span class="sd">	+--------------+-----------------------------+</span>
+<span class="sd">	|Action        |Effect                       |</span>
+<span class="sd">	+==============+=============================+</span>
+<span class="sd">	|:data:`LEFT`  |Move a piece to left         |</span>
+<span class="sd">	+--------------+-----------------------------+</span>
+<span class="sd">	|:data:`RIGHT` |Move a piece to right        |</span>
+<span class="sd">	+--------------+-----------------------------+</span>
+<span class="sd">	|:data:`UP`    |Rotate a piece clockwise     |</span>
+<span class="sd">	+--------------+-----------------------------+</span>
+<span class="sd">	|:data:`DOWN`  |Move a piece down            |</span>
+<span class="sd">	+--------------+-----------------------------+</span>
+<span class="sd">	|:data:`SPACE` |Drop a piece                 |</span>
+<span class="sd">	+--------------+-----------------------------+</span>
+<span class="sd">	|:data:`STEP`  |**NOT EXECUTABLE**           |</span>
+<span class="sd">	+--------------+-----------------------------+</span>
+<span class="sd">	</span>
+<span class="sd">	:data:`STEP` action is not executable by agent, but automatically called by :class:`BoardInterface`.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">LEFT</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:data:`LEFT` moves a piece to left.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">RIGHT</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:data:`RIGHT` moves a piece to right.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">UP</span> <span class="o">=</span> <span class="mi">2</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:data:`UP` rotates a piece clockwise.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">DOWN</span> <span class="o">=</span> <span class="mi">3</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:data:`DOWN` moves a piece down.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">SPACE</span> <span class="o">=</span> <span class="mi">4</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:data:`SPACE` drops a piece.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">STEP</span> <span class="o">=</span> <span class="mi">5</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:data:`STEP` increases timestep. It is not executable.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">tostr</span><span class="o">=</span><span class="p">{</span>
+		<span class="n">LEFT</span> <span class="p">:</span>	<span class="s1">&#39;LEFT&#39;</span><span class="p">,</span>
+		<span class="n">RIGHT</span> <span class="p">:</span>	<span class="s1">&#39;RIGHT&#39;</span><span class="p">,</span>
+		<span class="n">UP</span> <span class="p">:</span>	<span class="s1">&#39;UP&#39;</span><span class="p">,</span>
+		<span class="n">DOWN</span> <span class="p">:</span>	<span class="s1">&#39;DOWN&#39;</span><span class="p">,</span>
+		<span class="n">SPACE</span> <span class="p">:</span>	<span class="s1">&#39;SPACE&#39;</span>
+	<span class="p">}</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:data:`tostr` converts action index to its action name.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+</div>
+<div class="viewcode-block" id="Reward"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.Reward">[docs]</a><span class="k">class</span> <span class="nc">Reward</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:class:`Reward` defines a set of reward that is given to agent when action is performed at each state.</span>
+
+<span class="sd">	+------------------------+------+</span>
+<span class="sd">	|Transition              |Reward|</span>
+<span class="sd">	+========================+======+</span>
+<span class="sd">	|:data:`MOVEMENT`        |0     |</span>
+<span class="sd">	+------------------------+------+</span>
+<span class="sd">	|:data:`INVALID_MOVEMENT`|0     |</span>
+<span class="sd">	+------------------------+------+</span>
+<span class="sd">	|:data:`LINECLEAR`       |1     |</span>
+<span class="sd">	+------------------------+------+</span>
+<span class="sd">	|:data:`STEP`            |0     |</span>
+<span class="sd">	+------------------------+------+</span>
+<span class="sd">	|:data:`GAMEOVER`        |0     |</span>
+<span class="sd">	+------------------------+------+</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">MOVEMENT</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:data:`MOVEMENT` is a reward given whenever any action is taken.</span>
+<span class="sd">	If a reward for more specific description exisits, it overrides :data:`MOVEMENT`.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">INVALID_MOVEMENT</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:data:`INVALID_MOVEMENT` is a reward given whenever any invalid action is taken.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">LINECLEAR</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:data:`LINECLEAR` is a reward given each time a line is cleared.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">STEP</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:data:`STEP` is a reward given each time a timestep advances.</span>
+<span class="sd">	It is naturally set to zero.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">GAMEOVER</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:data:`GAMEOVER` is a reward given when game is over.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	</div>
+<div class="viewcode-block" id="Tetrominoes"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.Tetrominoes">[docs]</a><span class="k">class</span> <span class="nc">Tetrominoes</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:class:`Tetrominoes` defines possible shapes of a piece and its coordinates.</span>
+
+<span class="sd">	Possible shapes are:</span>
+
+<span class="sd">	1. :data:`ZShape`</span>
+<span class="sd">	2. :data:`SShape`</span>
+<span class="sd">	3. :data:`LineShape`</span>
+<span class="sd">	4. :data:`TShape`</span>
+<span class="sd">	5. :data:`SquareShape`</span>
+<span class="sd">	6. :data:`LShape`</span>
+<span class="sd">	7. :data:`MirroredLShape`</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">coordsTable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+		<span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="c1">#NoShape</span>
+        <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>     <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>    <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span><span class="c1">#ZShape</span>
+        <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="c1">#SShape</span>
+        <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="c1">#LineShape</span>
+        <span class="p">[[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="c1">#TShape</span>
+        <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="c1">#SquareShape</span>
+        <span class="p">[[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>   <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="c1">#LShape</span>
+        <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>  <span class="c1">#MirroredLShape</span>
+		<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+
+	<span class="n">NoShape</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">ZShape</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="n">SShape</span> <span class="o">=</span> <span class="mi">2</span>
+	<span class="n">LineShape</span> <span class="o">=</span> <span class="mi">3</span>
+	<span class="n">TShape</span> <span class="o">=</span> <span class="mi">4</span>
+	<span class="n">SquareShape</span> <span class="o">=</span> <span class="mi">5</span>
+	<span class="n">LShape</span> <span class="o">=</span> <span class="mi">6</span>
+	<span class="n">MirroredLShape</span> <span class="o">=</span> <span class="mi">7</span>
+	<span class="n">tostr</span><span class="o">=</span><span class="p">{</span>
+		<span class="n">NoShape</span>	<span class="p">:</span>	<span class="s1">&#39;Noshape&#39;</span><span class="p">,</span>
+		<span class="n">ZShape</span> <span class="p">:</span>	<span class="s1">&#39;Z-shape&#39;</span><span class="p">,</span>
+		<span class="n">SShape</span> <span class="p">:</span>	<span class="s1">&#39;S-shape&#39;</span><span class="p">,</span>
+		<span class="n">LineShape</span> <span class="p">:</span>	<span class="s1">&#39;I-shape&#39;</span><span class="p">,</span>
+		<span class="n">TShape</span> <span class="p">:</span>	<span class="s1">&#39;T-shape&#39;</span><span class="p">,</span>
+		<span class="n">SquareShape</span><span class="p">:</span><span class="s1">&#39;Square&#39;</span><span class="p">,</span>
+		<span class="n">LShape</span> <span class="p">:</span>	<span class="s1">&#39;L-shape&#39;</span><span class="p">,</span>
+		<span class="n">MirroredLShape</span><span class="p">:</span><span class="s2">&quot;L&#39;-shape&quot;</span>
+		<span class="p">}</span>
+
+	<span class="c1">#Added type (Not Shape, for drawing or special block)</span>
+	<span class="n">Aim</span> <span class="o">=</span> <span class="mi">8</span>
+</div>
+<div class="viewcode-block" id="MDP"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.MDP">[docs]</a><span class="k">class</span> <span class="nc">MDP</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:class:`MDP` is an abstract base class of MDP.</span>
+
+<span class="sd">	:meth:`T`, :meth:`S0`, :meth:`TICK` should be implemented.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+	<span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="MDP.T"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.MDP.T">[docs]</a>	<span class="k">def</span> <span class="nf">T</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">		:meth:`T` makes a transition with given action.</span>
+
+<span class="sd">		:param int action: Index of action to be performed.</span>
+
+<span class="sd">		:return (reward, success): *reward* is a reward attained by transition. *success* is true if given action was valid action.	</span>
+<span class="sd">		:rtype: (int, bool)</span>
+<span class="sd">		&#39;&#39;&#39;</span>
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+	<span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="MDP.S0"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.MDP.S0">[docs]</a>	<span class="k">def</span> <span class="nf">S0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">		:meth:`S0` sets an MDP to a start state.</span>
+<span class="sd">		&#39;&#39;&#39;</span>		
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+	<span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="MDP.TICK"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.MDP.TICK">[docs]</a>	<span class="k">def</span> <span class="nf">TICK</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`TICK` increases timestep by 1.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+		</div></div>
+<div class="viewcode-block" id="Board"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.Board">[docs]</a><span class="k">class</span> <span class="nc">Board</span><span class="p">(</span><span class="n">MDP</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:class:`Board` is a class representing Tetris in MDP form.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Width of Tetris board</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">height</span> <span class="o">=</span> <span class="mi">22</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Height of Tetris board</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">TICKS_FOR_LINEDOWN</span><span class="o">=</span><span class="mi">10</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="mi">5</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="n">interface</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">maxTick</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+		
+<div class="viewcode-block" id="Board.T"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.Board.T">[docs]</a>	<span class="k">def</span> <span class="nf">T</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">		:meth:`T` makes a transition with given action.</span>
+
+<span class="sd">		:param int action: Index of action to be performed.</span>
+
+<span class="sd">		:return (reward, success): *reward* is a reward attained by transition. *success* is true if given action was valid action.	</span>
+<span class="sd">		:rtype: (int, bool)</span>
+<span class="sd">		&#39;&#39;&#39;</span>
+		<span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="n">Action</span><span class="o">.</span><span class="n">LEFT</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tryMove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curX</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curY</span><span class="p">):</span>
+				<span class="k">return</span> <span class="n">Reward</span><span class="o">.</span><span class="n">MOVEMENT</span><span class="p">,</span> <span class="bp">True</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">return</span> <span class="n">Reward</span><span class="o">.</span><span class="n">INVALID_MOVEMENT</span><span class="p">,</span> <span class="bp">False</span>
+
+		<span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="n">Action</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tryMove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curX</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curY</span><span class="p">):</span>
+				<span class="k">return</span> <span class="n">Reward</span><span class="o">.</span><span class="n">MOVEMENT</span><span class="p">,</span> <span class="bp">True</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">return</span> <span class="n">Reward</span><span class="o">.</span><span class="n">INVALID_MOVEMENT</span><span class="p">,</span> <span class="bp">False</span>
+
+		<span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="n">Action</span><span class="o">.</span><span class="n">UP</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tryMove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rotatedRight</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span><span class="p">),</span>  <span class="bp">self</span><span class="o">.</span><span class="n">curX</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curY</span><span class="p">):</span>
+				<span class="k">return</span> <span class="n">Reward</span><span class="o">.</span><span class="n">MOVEMENT</span><span class="p">,</span> <span class="bp">True</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">return</span> <span class="n">Reward</span><span class="o">.</span><span class="n">INVALID_MOVEMENT</span><span class="p">,</span> <span class="bp">False</span>
+			
+		<span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="n">Action</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oneLineDown</span><span class="p">()</span>
+			
+		<span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="n">Action</span><span class="o">.</span><span class="n">SPACE</span><span class="p">:</span>
+			<span class="n">success</span> <span class="o">=</span> <span class="bp">True</span>
+			<span class="k">while</span> <span class="n">success</span><span class="p">:</span>
+				<span class="n">score</span><span class="p">,</span> <span class="n">success</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oneLineDown</span><span class="p">()</span>
+			<span class="k">return</span> <span class="n">score</span><span class="p">,</span> <span class="bp">True</span>
+
+		<span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="n">Action</span><span class="o">.</span><span class="n">STEP</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">TICK</span><span class="p">()</span>
+
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Invalid action :&quot;</span><span class="p">,</span><span class="n">action</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Board.TICK"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.Board.TICK">[docs]</a>	<span class="k">def</span> <span class="nf">TICK</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`TICK` increases timestep by 1.</span>
+
+<span class="sd">		:return (reward, success): *reward* is a reward attained by transition. *success* is true if given action was valid action.	</span>
+<span class="sd">		:rtype: (int, bool)</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxTick</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gameover</span><span class="p">(),</span> <span class="bp">False</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">TICKS_FOR_LINEDOWN</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">(</span><span class="n">Action</span><span class="o">.</span><span class="n">DOWN</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">Reward</span><span class="o">.</span><span class="n">STEP</span><span class="p">,</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="Board.S0"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.Board.S0">[docs]</a>	<span class="k">def</span> <span class="nf">S0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">		:meth:`S0` sets an MDP to a start state.</span>
+
+<span class="sd">		#TODO explain more in detail.</span>
+<span class="sd">		&#39;&#39;&#39;</span>		
+		<span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Board</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">Board</span><span class="o">.</span><span class="n">width</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+		<span class="c1">#self.table[0,:] = 1</span>
+		<span class="c1">#self.table[0,0] = 0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">curX</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">curY</span> <span class="o">=</span> <span class="mi">0</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">=</span><span class="mi">0</span>		
+		<span class="bp">self</span><span class="o">.</span><span class="n">isOver</span> <span class="o">=</span> <span class="bp">False</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">pieces</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="c1"># pieces[0] : current, [1] : next, [2] : next2, ...</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">nextpiece</span><span class="p">()</span>
+
+	<span class="c1">###########################################################################</span>
+</div>
+	<span class="k">def</span> <span class="nf">_rotatedRight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+		<span class="n">result</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">result</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+		<span class="k">return</span> <span class="n">result</span>
+	
+	<span class="k">def</span> <span class="nf">_oneLineDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tryMove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curX</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curY</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span> <span class="c1">#true if downed.</span>
+			<span class="k">return</span> <span class="n">Reward</span><span class="o">.</span><span class="n">MOVEMENT</span><span class="p">,</span> <span class="bp">True</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">Xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">curX</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+			<span class="n">Ys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">curY</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+			<span class="c1">#print([(x,y) for x,y in zip(Xs,Ys)], self.pieces[0])</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">Ys</span><span class="p">,</span><span class="n">Xs</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="k">except</span><span class="p">:</span>
+				<span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span>
+				<span class="k">print</span><span class="p">([(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span><span class="n">Ys</span><span class="p">)],</span> <span class="bp">self</span><span class="o">.</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+				<span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span><span class="p">)</span>
+				<span class="nb">exit</span><span class="p">()</span>
+
+			<span class="c1">#remove full lines</span>
+			<span class="n">rowsToRemove</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">numsToRemove</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rowsToRemove</span><span class="p">)</span>
+
+			<span class="k">if</span> <span class="n">numsToRemove</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">Board</span><span class="o">.</span><span class="n">height</span><span class="p">),</span> <span class="n">rowsToRemove</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="n">numsToRemove</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">line_removed</span><span class="p">(</span><span class="n">numsToRemove</span><span class="p">)</span>
+
+			<span class="n">gameoverscore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nextpiece</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">gameoverscore</span><span class="p">:</span>
+				<span class="k">return</span> <span class="n">gameoverscore</span><span class="p">,</span> <span class="bp">False</span>
+			<span class="k">return</span> <span class="n">numsToRemove</span><span class="p">,</span> <span class="bp">False</span>
+
+<div class="viewcode-block" id="Board.canMove"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.Board.canMove">[docs]</a>	<span class="k">def</span> <span class="nf">canMove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">newX</span><span class="p">,</span> <span class="n">newY</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">		:meth:`canMove` checks if piece can be moved to (*newX*, *newY*).</span>
+
+<span class="sd">		:param int shape: shape of a piece to be placed</span>
+<span class="sd">		:param np.ndarray coords: (4,2) int32 numpy array. it includes coordinates of \</span>
+<span class="sd">		four blocks in a piece to be placed</span>
+<span class="sd">		:param int newX: New X value to be placed</span>
+<span class="sd">		:param int newY: New Y value to be placed</span>
+
+<span class="sd">		:return result: True if movement is possible</span>
+<span class="sd">		:rtype: bool</span>
+<span class="sd">		&#39;&#39;&#39;</span>
+		<span class="n">Xs</span> <span class="o">=</span> <span class="n">newX</span> <span class="o">+</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+		<span class="n">Ys</span> <span class="o">=</span> <span class="n">newY</span> <span class="o">-</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+		
+		<span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="mi">0</span><span class="o">&lt;=</span><span class="n">Xs</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">Xs</span> <span class="o">&lt;</span> <span class="n">Board</span><span class="o">.</span><span class="n">width</span><span class="p">)):</span>
+			<span class="k">return</span> <span class="bp">False</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="mi">0</span><span class="o">&lt;=</span><span class="n">Ys</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">Ys</span> <span class="o">&lt;</span> <span class="n">Board</span><span class="o">.</span><span class="n">height</span><span class="p">)):</span>
+			<span class="k">return</span> <span class="bp">False</span>
+		<span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">Ys</span><span class="p">,</span><span class="n">Xs</span><span class="p">]</span> <span class="o">!=</span> <span class="n">Tetrominoes</span><span class="o">.</span><span class="n">NoShape</span><span class="p">):</span>
+			<span class="k">return</span> <span class="bp">False</span>
+		<span class="k">return</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="Board.tryMove"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.Board.tryMove">[docs]</a>	<span class="k">def</span> <span class="nf">tryMove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">newX</span><span class="p">,</span> <span class="n">newY</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`tryMove` moves piece if possible. If impossible, do nothing.</span>
+
+<span class="sd">		:param int shape: shape of a piece to be placed</span>
+<span class="sd">		:param np.ndarray coords: (4,2) int32 numpy array. it includes coordinates of \</span>
+<span class="sd">		four blocks in a piece to be placed</span>
+<span class="sd">		:param int newX: New X value to be placed</span>
+<span class="sd">		:param int newY: New Y value to be placed</span>
+
+<span class="sd">		:return result: True if movement is possible</span>
+<span class="sd">		:rtype: bool</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">canMove</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">newX</span><span class="p">,</span> <span class="n">newY</span><span class="p">):</span>
+			<span class="k">return</span> <span class="bp">False</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">shape</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[:]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">curX</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curY</span> <span class="o">=</span> <span class="n">newX</span><span class="p">,</span> <span class="n">newY</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">Refresh</span><span class="p">()</span>
+			<span class="c1">#print(self.table)</span>
+			<span class="k">return</span> <span class="bp">True</span>
+			</div>
+<div class="viewcode-block" id="Board.nextpiece"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.Board.nextpiece">[docs]</a>	<span class="k">def</span> <span class="nf">nextpiece</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`nextpiece` spawns new piece and place next piece on the board.</span>
+
+<span class="sd">		New piece will be given by :attr:`self.interface` and be appended at the end of :attr:`self.pieces`.</span>
+<span class="sd">		If next piece cannot be placed to proper position, the game is over.</span>
+
+<span class="sd">		:returns reward: a reward given by transition</span>
+<span class="sd">		:rtype: int or float</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pieces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pieces</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+		<span class="n">newshape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">newshape</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="k">else</span> <span class="n">Tetrominoes</span><span class="o">.</span><span class="n">NoShape</span>		
+		<span class="bp">self</span><span class="o">.</span><span class="n">pieces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newshape</span><span class="p">)</span>
+
+		<span class="c1"># put pieces[0] on stateboard.</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+			<span class="k">return</span> <span class="mi">0</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span> <span class="o">=</span> <span class="n">Tetrominoes</span><span class="o">.</span><span class="n">coordsTable</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">curX</span> <span class="o">=</span> <span class="n">Board</span><span class="o">.</span><span class="n">width</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">curY</span> <span class="o">=</span> <span class="n">Board</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+		
+
+		<span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tryMove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curX</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curY</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">a</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gameover</span><span class="p">()</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="mi">0</span>
+
+	<span class="c1">###########################################################################</span>
+			</div>
+<div class="viewcode-block" id="Board.phi"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.Board.phi">[docs]</a>	<span class="k">def</span> <span class="nf">phi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`phi` encodes state tuple into (2, 22, 10) tensor.</span>
+<span class="sd">		</span>
+<span class="sd">		:return phi: binary (2, 22, 10) state tensor</span>
+<span class="sd">		:rtype: numpy.ndarray</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">x_piece</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Board</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">Board</span><span class="o">.</span><span class="n">width</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+		<span class="n">Xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">curX</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+		<span class="n">Ys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">curY</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+		<span class="n">x_piece</span><span class="p">[</span><span class="n">Ys</span><span class="p">,</span><span class="n">Xs</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>		
+		<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int32&#39;</span><span class="p">),</span> <span class="n">x_piece</span><span class="p">])</span>
+
+		<span class="k">return</span> <span class="n">X</span>
+</div>
+<div class="viewcode-block" id="Board.S"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.Board.S">[docs]</a>	<span class="k">def</span> <span class="nf">S</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`S` returns a current state of MDP in a tuple.</span>
+
+<span class="sd">		Tuple contains:</span>
+
+<span class="sd">		1. Copied matrix of :attr:`table`</span>
+<span class="sd">		2. Copied list of :attr:`pieces`</span>
+<span class="sd">		3. Copied matrix of :attr:`piececoords`</span>
+<span class="sd">		4. :attr:`curX`</span>
+<span class="sd">		5. :attr:`curY`</span>
+<span class="sd">		6. :attr:`t`</span>
+<span class="sd">		7. :attr:`isOver`</span>
+
+<span class="sd">		:returns state: current state in a tuple form</span>
+<span class="sd">		:rtype: tuple</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pieces</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">curX</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">isOver</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Board.setS"><a class="viewcode-back" href="../../../Tetris.mods.html#Tetris.mods.Board.Board.setS">[docs]</a>	<span class="k">def</span> <span class="nf">setS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`setS` sets MDP&#39;s state to given *other*.</span>
+
+<span class="sd">		The format of *other* should be the same as that returned by :meth:`S`.</span>
+
+<span class="sd">		:param tuple other: state to be set		</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">state</span><span class="p">,</span> <span class="n">pieces</span><span class="p">,</span> <span class="n">piececoords</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curX</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">curY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">isOver</span> <span class="o">=</span> <span class="n">other</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">state</span><span class="p">[:]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pieces</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">piececoords</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">piececoords</span><span class="p">[:]</span>
+
+			</div>
+	<span class="k">def</span> <span class="nf">_gameover</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">isOver</span><span class="o">=</span><span class="bp">True</span>
+		<span class="k">return</span> <span class="n">Reward</span><span class="o">.</span><span class="n">GAMEOVER</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Tetris  documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

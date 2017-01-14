@@ -1,10 +1,13 @@
 ﻿import wx
-from Board import *
-from Interfaces.BoardInterface import *
-import time
-from Authen import Env
 import _pickle
 import numpy as np
+import time
+
+from .BoardInterface import *
+
+from ..Board import *
+from ..Authen import Env
+
 
 class TetrisFrame(wx.Frame):
 	def __init__(self):
@@ -207,7 +210,7 @@ class VisualInterface(Visual, BoardInterface):
 	def perform_action(self, action):
 		self.actionhistory.append((self.board.t, action))
 		r, _ = self.board.T(action)
-		self.R += r
+		self.G += r
 		if action != Action.STEP:
 			pass
 			#print('Pressed :', Action.tostr[action], r)

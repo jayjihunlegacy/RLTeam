@@ -1,13 +1,15 @@
-from Machines.Machine import Machine
-import numpy as np
-from Board import *
-from Interfaces.BoardInterface import *
+﻿import numpy as np
 from abc import ABCMeta, abstractmethod
 import _pickle
 import copy
 import os
 from functools import reduce
-from utils import *
+
+from .Machine import Machine
+
+from ..Board import *
+from ..Interfaces.BoardInterface import *
+from ..utils import *
 
 class MicroMCMachine(Machine):
 	def __init__(self, maxtime=10):
@@ -232,7 +234,7 @@ class MCTSMachine(Machine):
 				self.dummyInterface.perform_action(action)
 				pointer = pointer.get_child(action)
 
-			R = self.dummyInterface.R
+			G = self.dummyInterface.G
 			#backpropagation
 			while pointer is not None:
 				pointer.update(R)

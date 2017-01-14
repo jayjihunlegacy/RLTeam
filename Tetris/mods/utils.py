@@ -1,4 +1,5 @@
 ﻿import numpy as np
+
 class StateActionNode:#(s,a) pair..
 	def __init__(self, N, parent=None):
 		self.N = N

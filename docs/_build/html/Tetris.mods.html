@@ -1,0 +1,675 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tetris.mods package &mdash; Tetris  documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Tetris  documentation" href="index.html" />
+    <link rel="up" title="Tetris package" href="Tetris.html" />
+    <link rel="next" title="Tetris.mods.Interfaces package" href="Tetris.mods.Interfaces.html" />
+    <link rel="prev" title="Tetris package" href="Tetris.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Tetris.mods.Interfaces.html" title="Tetris.mods.Interfaces package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Tetris.html" title="Tetris package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Tetris  documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="Tetris.html" accesskey="U">Tetris package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tetris-mods-package">
+<h1>Tetris.mods package<a class="headerlink" href="#tetris-mods-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Tetris.mods.Interfaces.html">Tetris.mods.Interfaces package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Tetris.mods.Interfaces.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tetris.mods.Interfaces.html#module-Tetris.mods.Interfaces.BoardInterface">Tetris.mods.Interfaces.BoardInterface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tetris.mods.Interfaces.html#module-Tetris.mods.Interfaces.RLInterface">Tetris.mods.Interfaces.RLInterface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tetris.mods.Interfaces.html#module-Tetris.mods.Interfaces.VisualInterface">Tetris.mods.Interfaces.VisualInterface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tetris.mods.Interfaces.html#module-Tetris.mods.Interfaces">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Tetris.mods.Machines.html">Tetris.mods.Machines package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Tetris.mods.Machines.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tetris.mods.Machines.html#module-Tetris.mods.Machines.MCMachine">Tetris.mods.Machines.MCMachine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tetris.mods.Machines.html#module-Tetris.mods.Machines.Machine">Tetris.mods.Machines.Machine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tetris.mods.Machines.html#module-Tetris.mods.Machines.NeuralMachine">Tetris.mods.Machines.NeuralMachine module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tetris.mods.Machines.html#module-Tetris.mods.Machines">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-Tetris.mods.Authen">
+<span id="tetris-mods-authen-module"></span><h2>Tetris.mods.Authen module<a class="headerlink" href="#module-Tetris.mods.Authen" title="Permalink to this headline">¶</a></h2>
+<p>Authen</p>
+<dl class="class">
+<dt id="Tetris.mods.Authen.Env">
+<em class="property">class </em><code class="descclassname">Tetris.mods.Authen.</code><code class="descname">Env</code><a class="reference internal" href="_modules/Tetris/mods/Authen.html#Env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Authen.Env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Tetris.mods.Board">
+<span id="tetris-mods-board-module"></span><h2>Tetris.mods.Board module<a class="headerlink" href="#module-Tetris.mods.Board" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="Tetris.mods.Board.Action">
+<em class="property">class </em><code class="descclassname">Tetris.mods.Board.</code><code class="descname">Action</code><a class="reference internal" href="_modules/Tetris/mods/Board.html#Action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.Action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p><a class="reference internal" href="#Tetris.mods.Board.Action" title="Tetris.mods.Board.Action"><code class="xref py py-class docutils literal"><span class="pre">Action</span></code></a> defines a set of actions that can be performed.</p>
+<p>Actions involves :</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Action</th>
+<th class="head">Effect</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="#Tetris.mods.Board.Action.LEFT" title="Tetris.mods.Board.Action.LEFT"><code class="xref py py-data docutils literal"><span class="pre">LEFT</span></code></a></td>
+<td>Move a piece to left</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Tetris.mods.Board.Action.RIGHT" title="Tetris.mods.Board.Action.RIGHT"><code class="xref py py-data docutils literal"><span class="pre">RIGHT</span></code></a></td>
+<td>Move a piece to right</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Tetris.mods.Board.Action.UP" title="Tetris.mods.Board.Action.UP"><code class="xref py py-data docutils literal"><span class="pre">UP</span></code></a></td>
+<td>Rotate a piece clockwise</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Tetris.mods.Board.Action.DOWN" title="Tetris.mods.Board.Action.DOWN"><code class="xref py py-data docutils literal"><span class="pre">DOWN</span></code></a></td>
+<td>Move a piece down</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Tetris.mods.Board.Action.SPACE" title="Tetris.mods.Board.Action.SPACE"><code class="xref py py-data docutils literal"><span class="pre">SPACE</span></code></a></td>
+<td>Drop a piece</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Tetris.mods.Board.Action.STEP" title="Tetris.mods.Board.Action.STEP"><code class="xref py py-data docutils literal"><span class="pre">STEP</span></code></a></td>
+<td><strong>NOT EXECUTABLE</strong></td>
+</tr>
+</tbody>
+</table>
+<p><a class="reference internal" href="#Tetris.mods.Board.Action.STEP" title="Tetris.mods.Board.Action.STEP"><code class="xref py py-data docutils literal"><span class="pre">STEP</span></code></a> action is not executable by agent, but automatically called by <code class="xref py py-class docutils literal"><span class="pre">BoardInterface</span></code>.</p>
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Action.LEFT">
+<code class="descname">LEFT</code><em class="property"> = 0</em><a class="headerlink" href="#Tetris.mods.Board.Action.LEFT" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Action.LEFT" title="Tetris.mods.Board.Action.LEFT"><code class="xref py py-data docutils literal"><span class="pre">LEFT</span></code></a> moves a piece to left.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Action.RIGHT">
+<code class="descname">RIGHT</code><em class="property"> = 1</em><a class="headerlink" href="#Tetris.mods.Board.Action.RIGHT" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Action.RIGHT" title="Tetris.mods.Board.Action.RIGHT"><code class="xref py py-data docutils literal"><span class="pre">RIGHT</span></code></a> moves a piece to right.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Action.UP">
+<code class="descname">UP</code><em class="property"> = 2</em><a class="headerlink" href="#Tetris.mods.Board.Action.UP" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Action.UP" title="Tetris.mods.Board.Action.UP"><code class="xref py py-data docutils literal"><span class="pre">UP</span></code></a> rotates a piece clockwise.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Action.DOWN">
+<code class="descname">DOWN</code><em class="property"> = 3</em><a class="headerlink" href="#Tetris.mods.Board.Action.DOWN" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Action.DOWN" title="Tetris.mods.Board.Action.DOWN"><code class="xref py py-data docutils literal"><span class="pre">DOWN</span></code></a> moves a piece down.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Action.SPACE">
+<code class="descname">SPACE</code><em class="property"> = 4</em><a class="headerlink" href="#Tetris.mods.Board.Action.SPACE" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Action.SPACE" title="Tetris.mods.Board.Action.SPACE"><code class="xref py py-data docutils literal"><span class="pre">SPACE</span></code></a> drops a piece.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Action.STEP">
+<code class="descname">STEP</code><em class="property"> = 5</em><a class="headerlink" href="#Tetris.mods.Board.Action.STEP" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Action.STEP" title="Tetris.mods.Board.Action.STEP"><code class="xref py py-data docutils literal"><span class="pre">STEP</span></code></a> increases timestep. It is not executable.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Action.tostr">
+<code class="descname">tostr</code><em class="property"> = {0: 'LEFT', 1: 'RIGHT', 2: 'UP', 3: 'DOWN', 4: 'SPACE'}</em><a class="headerlink" href="#Tetris.mods.Board.Action.tostr" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Action.tostr" title="Tetris.mods.Board.Action.tostr"><code class="xref py py-data docutils literal"><span class="pre">tostr</span></code></a> converts action index to its action name.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Tetris.mods.Board.Reward">
+<em class="property">class </em><code class="descclassname">Tetris.mods.Board.</code><code class="descname">Reward</code><a class="reference internal" href="_modules/Tetris/mods/Board.html#Reward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.Reward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p><a class="reference internal" href="#Tetris.mods.Board.Reward" title="Tetris.mods.Board.Reward"><code class="xref py py-class docutils literal"><span class="pre">Reward</span></code></a> defines a set of reward that is given to agent when action is performed at each state.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="80%" />
+<col width="20%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Transition</th>
+<th class="head">Reward</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="#Tetris.mods.Board.Reward.MOVEMENT" title="Tetris.mods.Board.Reward.MOVEMENT"><code class="xref py py-data docutils literal"><span class="pre">MOVEMENT</span></code></a></td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Tetris.mods.Board.Reward.INVALID_MOVEMENT" title="Tetris.mods.Board.Reward.INVALID_MOVEMENT"><code class="xref py py-data docutils literal"><span class="pre">INVALID_MOVEMENT</span></code></a></td>
+<td>0</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Tetris.mods.Board.Reward.LINECLEAR" title="Tetris.mods.Board.Reward.LINECLEAR"><code class="xref py py-data docutils literal"><span class="pre">LINECLEAR</span></code></a></td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Tetris.mods.Board.Reward.STEP" title="Tetris.mods.Board.Reward.STEP"><code class="xref py py-data docutils literal"><span class="pre">STEP</span></code></a></td>
+<td>0</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Tetris.mods.Board.Reward.GAMEOVER" title="Tetris.mods.Board.Reward.GAMEOVER"><code class="xref py py-data docutils literal"><span class="pre">GAMEOVER</span></code></a></td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Reward.MOVEMENT">
+<code class="descname">MOVEMENT</code><em class="property"> = 0</em><a class="headerlink" href="#Tetris.mods.Board.Reward.MOVEMENT" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Reward.MOVEMENT" title="Tetris.mods.Board.Reward.MOVEMENT"><code class="xref py py-data docutils literal"><span class="pre">MOVEMENT</span></code></a> is a reward given whenever any action is taken.
+If a reward for more specific description exisits, it overrides <a class="reference internal" href="#Tetris.mods.Board.Reward.MOVEMENT" title="Tetris.mods.Board.Reward.MOVEMENT"><code class="xref py py-data docutils literal"><span class="pre">MOVEMENT</span></code></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Reward.INVALID_MOVEMENT">
+<code class="descname">INVALID_MOVEMENT</code><em class="property"> = 0</em><a class="headerlink" href="#Tetris.mods.Board.Reward.INVALID_MOVEMENT" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Reward.INVALID_MOVEMENT" title="Tetris.mods.Board.Reward.INVALID_MOVEMENT"><code class="xref py py-data docutils literal"><span class="pre">INVALID_MOVEMENT</span></code></a> is a reward given whenever any invalid action is taken.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Reward.LINECLEAR">
+<code class="descname">LINECLEAR</code><em class="property"> = 1</em><a class="headerlink" href="#Tetris.mods.Board.Reward.LINECLEAR" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Reward.LINECLEAR" title="Tetris.mods.Board.Reward.LINECLEAR"><code class="xref py py-data docutils literal"><span class="pre">LINECLEAR</span></code></a> is a reward given each time a line is cleared.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Reward.STEP">
+<code class="descname">STEP</code><em class="property"> = 0</em><a class="headerlink" href="#Tetris.mods.Board.Reward.STEP" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Reward.STEP" title="Tetris.mods.Board.Reward.STEP"><code class="xref py py-data docutils literal"><span class="pre">STEP</span></code></a> is a reward given each time a timestep advances.
+It is naturally set to zero.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Reward.GAMEOVER">
+<code class="descname">GAMEOVER</code><em class="property"> = 0</em><a class="headerlink" href="#Tetris.mods.Board.Reward.GAMEOVER" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Reward.GAMEOVER" title="Tetris.mods.Board.Reward.GAMEOVER"><code class="xref py py-data docutils literal"><span class="pre">GAMEOVER</span></code></a> is a reward given when game is over.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Tetris.mods.Board.Tetrominoes">
+<em class="property">class </em><code class="descclassname">Tetris.mods.Board.</code><code class="descname">Tetrominoes</code><a class="reference internal" href="_modules/Tetris/mods/Board.html#Tetrominoes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.Tetrominoes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p><a class="reference internal" href="#Tetris.mods.Board.Tetrominoes" title="Tetris.mods.Board.Tetrominoes"><code class="xref py py-class docutils literal"><span class="pre">Tetrominoes</span></code></a> defines possible shapes of a piece and its coordinates.</p>
+<p>Possible shapes are:</p>
+<ol class="arabic simple">
+<li><a class="reference internal" href="#Tetris.mods.Board.Tetrominoes.ZShape" title="Tetris.mods.Board.Tetrominoes.ZShape"><code class="xref py py-data docutils literal"><span class="pre">ZShape</span></code></a></li>
+<li><a class="reference internal" href="#Tetris.mods.Board.Tetrominoes.SShape" title="Tetris.mods.Board.Tetrominoes.SShape"><code class="xref py py-data docutils literal"><span class="pre">SShape</span></code></a></li>
+<li><a class="reference internal" href="#Tetris.mods.Board.Tetrominoes.LineShape" title="Tetris.mods.Board.Tetrominoes.LineShape"><code class="xref py py-data docutils literal"><span class="pre">LineShape</span></code></a></li>
+<li><a class="reference internal" href="#Tetris.mods.Board.Tetrominoes.TShape" title="Tetris.mods.Board.Tetrominoes.TShape"><code class="xref py py-data docutils literal"><span class="pre">TShape</span></code></a></li>
+<li><a class="reference internal" href="#Tetris.mods.Board.Tetrominoes.SquareShape" title="Tetris.mods.Board.Tetrominoes.SquareShape"><code class="xref py py-data docutils literal"><span class="pre">SquareShape</span></code></a></li>
+<li><a class="reference internal" href="#Tetris.mods.Board.Tetrominoes.LShape" title="Tetris.mods.Board.Tetrominoes.LShape"><code class="xref py py-data docutils literal"><span class="pre">LShape</span></code></a></li>
+<li><a class="reference internal" href="#Tetris.mods.Board.Tetrominoes.MirroredLShape" title="Tetris.mods.Board.Tetrominoes.MirroredLShape"><code class="xref py py-data docutils literal"><span class="pre">MirroredLShape</span></code></a></li>
+</ol>
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Tetrominoes.coordsTable">
+<code class="descname">coordsTable</code><em class="property"> = array([[[ 0,  0],         [ 0,  0],         [ 0,  0],         [ 0,  0]],         [[ 0, -1],         [ 0,  0],         [-1,  0],         [-1,  1]],         [[ 0, -1],         [ 0,  0],         [ 1,  0],         [ 1,  1]],         [[ 0, -1],         [ 0,  0],         [ 0,  1],         [ 0,  2]],         [[-1,  0],         [ 0,  0],         [ 1,  0],         [ 0,  1]],         [[ 0,  0],         [ 1,  0],         [ 0,  1],         [ 1,  1]],         [[-1, -1],         [ 0, -1],         [ 0,  0],         [ 0,  1]],         [[ 1, -1],         [ 0, -1],         [ 0,  0],         [ 0,  1]]])</em><a class="headerlink" href="#Tetris.mods.Board.Tetrominoes.coordsTable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Tetrominoes.NoShape">
+<code class="descname">NoShape</code><em class="property"> = 0</em><a class="headerlink" href="#Tetris.mods.Board.Tetrominoes.NoShape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Tetrominoes.ZShape">
+<code class="descname">ZShape</code><em class="property"> = 1</em><a class="headerlink" href="#Tetris.mods.Board.Tetrominoes.ZShape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Tetrominoes.SShape">
+<code class="descname">SShape</code><em class="property"> = 2</em><a class="headerlink" href="#Tetris.mods.Board.Tetrominoes.SShape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Tetrominoes.LineShape">
+<code class="descname">LineShape</code><em class="property"> = 3</em><a class="headerlink" href="#Tetris.mods.Board.Tetrominoes.LineShape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Tetrominoes.TShape">
+<code class="descname">TShape</code><em class="property"> = 4</em><a class="headerlink" href="#Tetris.mods.Board.Tetrominoes.TShape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Tetrominoes.SquareShape">
+<code class="descname">SquareShape</code><em class="property"> = 5</em><a class="headerlink" href="#Tetris.mods.Board.Tetrominoes.SquareShape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Tetrominoes.LShape">
+<code class="descname">LShape</code><em class="property"> = 6</em><a class="headerlink" href="#Tetris.mods.Board.Tetrominoes.LShape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Tetrominoes.MirroredLShape">
+<code class="descname">MirroredLShape</code><em class="property"> = 7</em><a class="headerlink" href="#Tetris.mods.Board.Tetrominoes.MirroredLShape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Tetrominoes.tostr">
+<code class="descname">tostr</code><em class="property"> = {0: 'Noshape', 1: 'Z-shape', 2: 'S-shape', 3: 'I-shape', 4: 'T-shape', 5: 'Square', 6: 'L-shape', 7: &quot;L'-shape&quot;}</em><a class="headerlink" href="#Tetris.mods.Board.Tetrominoes.tostr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Tetrominoes.Aim">
+<code class="descname">Aim</code><em class="property"> = 8</em><a class="headerlink" href="#Tetris.mods.Board.Tetrominoes.Aim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Tetris.mods.Board.MDP">
+<em class="property">class </em><code class="descclassname">Tetris.mods.Board.</code><code class="descname">MDP</code><a class="reference internal" href="_modules/Tetris/mods/Board.html#MDP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.MDP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p><a class="reference internal" href="#Tetris.mods.Board.MDP" title="Tetris.mods.Board.MDP"><code class="xref py py-class docutils literal"><span class="pre">MDP</span></code></a> is an abstract base class of MDP.</p>
+<p><a class="reference internal" href="#Tetris.mods.Board.MDP.T" title="Tetris.mods.Board.MDP.T"><code class="xref py py-meth docutils literal"><span class="pre">T()</span></code></a>, <a class="reference internal" href="#Tetris.mods.Board.MDP.S0" title="Tetris.mods.Board.MDP.S0"><code class="xref py py-meth docutils literal"><span class="pre">S0()</span></code></a>, <a class="reference internal" href="#Tetris.mods.Board.MDP.TICK" title="Tetris.mods.Board.MDP.TICK"><code class="xref py py-meth docutils literal"><span class="pre">TICK()</span></code></a> should be implemented.</p>
+<dl class="method">
+<dt id="Tetris.mods.Board.MDP.T">
+<code class="descname">T</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Board.html#MDP.T"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.MDP.T" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.MDP.T" title="Tetris.mods.Board.MDP.T"><code class="xref py py-meth docutils literal"><span class="pre">T()</span></code></a> makes a transition with given action.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>action</strong> (<em>int</em>) &#8211; Index of action to be performed.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Return (reward, success):</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><em>reward</em> is a reward attained by transition. <em>success</em> is true if given action was valid action.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(int, bool)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Board.MDP.S0">
+<code class="descname">S0</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Board.html#MDP.S0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.MDP.S0" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.MDP.S0" title="Tetris.mods.Board.MDP.S0"><code class="xref py py-meth docutils literal"><span class="pre">S0()</span></code></a> sets an MDP to a start state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Board.MDP.TICK">
+<code class="descname">TICK</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Board.html#MDP.TICK"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.MDP.TICK" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.MDP.TICK" title="Tetris.mods.Board.MDP.TICK"><code class="xref py py-meth docutils literal"><span class="pre">TICK()</span></code></a> increases timestep by 1.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Tetris.mods.Board.Board">
+<em class="property">class </em><code class="descclassname">Tetris.mods.Board.</code><code class="descname">Board</code><span class="sig-paren">(</span><em>interface</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Board.html#Board"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.Board" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Tetris.mods.Board.MDP" title="Tetris.mods.Board.MDP"><code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Board.MDP</span></code></a></p>
+<p><a class="reference internal" href="#Tetris.mods.Board.Board" title="Tetris.mods.Board.Board"><code class="xref py py-class docutils literal"><span class="pre">Board</span></code></a> is a class representing Tetris in MDP form.</p>
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Board.width">
+<code class="descname">width</code><em class="property"> = 10</em><a class="headerlink" href="#Tetris.mods.Board.Board.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Width of Tetris board</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Board.Board.height">
+<code class="descname">height</code><em class="property"> = 22</em><a class="headerlink" href="#Tetris.mods.Board.Board.height" title="Permalink to this definition">¶</a></dt>
+<dd><p>Height of Tetris board</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Board.Board.T">
+<code class="descname">T</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Board.html#Board.T"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.Board.T" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Board.T" title="Tetris.mods.Board.Board.T"><code class="xref py py-meth docutils literal"><span class="pre">T()</span></code></a> makes a transition with given action.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>action</strong> (<em>int</em>) &#8211; Index of action to be performed.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Return (reward, success):</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><em>reward</em> is a reward attained by transition. <em>success</em> is true if given action was valid action.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(int, bool)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Board.Board.TICK">
+<code class="descname">TICK</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Board.html#Board.TICK"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.Board.TICK" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Board.TICK" title="Tetris.mods.Board.Board.TICK"><code class="xref py py-meth docutils literal"><span class="pre">TICK()</span></code></a> increases timestep by 1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Return (reward, success):</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><em>reward</em> is a reward attained by transition. <em>success</em> is true if given action was valid action.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">(int, bool)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Board.Board.S0">
+<code class="descname">S0</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Board.html#Board.S0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.Board.S0" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Board.S0" title="Tetris.mods.Board.Board.S0"><code class="xref py py-meth docutils literal"><span class="pre">S0()</span></code></a> sets an MDP to a start state.</p>
+<p>#TODO explain more in detail.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Board.Board.canMove">
+<code class="descname">canMove</code><span class="sig-paren">(</span><em>shape</em>, <em>coords</em>, <em>newX</em>, <em>newY</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Board.html#Board.canMove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.Board.canMove" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Board.canMove" title="Tetris.mods.Board.Board.canMove"><code class="xref py py-meth docutils literal"><span class="pre">canMove()</span></code></a> checks if piece can be moved to (<em>newX</em>, <em>newY</em>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>shape</strong> (<em>int</em>) &#8211; shape of a piece to be placed</li>
+<li><strong>coords</strong> (<em>np.ndarray</em>) &#8211; (4,2) int32 numpy array. it includes coordinates of           four blocks in a piece to be placed</li>
+<li><strong>newX</strong> (<em>int</em>) &#8211; New X value to be placed</li>
+<li><strong>newY</strong> (<em>int</em>) &#8211; New Y value to be placed</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return result:</th><td class="field-body"><p class="first">True if movement is possible</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Board.Board.tryMove">
+<code class="descname">tryMove</code><span class="sig-paren">(</span><em>shape</em>, <em>coords</em>, <em>newX</em>, <em>newY</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Board.html#Board.tryMove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.Board.tryMove" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Board.tryMove" title="Tetris.mods.Board.Board.tryMove"><code class="xref py py-meth docutils literal"><span class="pre">tryMove()</span></code></a> moves piece if possible. If impossible, do nothing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>shape</strong> (<em>int</em>) &#8211; shape of a piece to be placed</li>
+<li><strong>coords</strong> (<em>np.ndarray</em>) &#8211; (4,2) int32 numpy array. it includes coordinates of           four blocks in a piece to be placed</li>
+<li><strong>newX</strong> (<em>int</em>) &#8211; New X value to be placed</li>
+<li><strong>newY</strong> (<em>int</em>) &#8211; New Y value to be placed</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return result:</th><td class="field-body"><p class="first">True if movement is possible</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Board.Board.nextpiece">
+<code class="descname">nextpiece</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Board.html#Board.nextpiece"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.Board.nextpiece" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Board.nextpiece" title="Tetris.mods.Board.Board.nextpiece"><code class="xref py py-meth docutils literal"><span class="pre">nextpiece()</span></code></a> spawns new piece and place next piece on the board.</p>
+<p>New piece will be given by <code class="xref py py-attr docutils literal"><span class="pre">self.interface</span></code> and be appended at the end of <code class="xref py py-attr docutils literal"><span class="pre">self.pieces</span></code>.
+If next piece cannot be placed to proper position, the game is over.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns reward:</th><td class="field-body">a reward given by transition</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int or float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Board.Board.phi">
+<code class="descname">phi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Board.html#Board.phi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.Board.phi" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Board.phi" title="Tetris.mods.Board.Board.phi"><code class="xref py py-meth docutils literal"><span class="pre">phi()</span></code></a> encodes state tuple into (2, 22, 10) tensor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return phi:</th><td class="field-body">binary (2, 22, 10) state tensor</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Board.Board.S">
+<code class="descname">S</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Board.html#Board.S"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.Board.S" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Board.S" title="Tetris.mods.Board.Board.S"><code class="xref py py-meth docutils literal"><span class="pre">S()</span></code></a> returns a current state of MDP in a tuple.</p>
+<p>Tuple contains:</p>
+<ol class="arabic simple">
+<li>Copied matrix of <code class="xref py py-attr docutils literal"><span class="pre">table</span></code></li>
+<li>Copied list of <code class="xref py py-attr docutils literal"><span class="pre">pieces</span></code></li>
+<li>Copied matrix of <code class="xref py py-attr docutils literal"><span class="pre">piececoords</span></code></li>
+<li><code class="xref py py-attr docutils literal"><span class="pre">curX</span></code></li>
+<li><code class="xref py py-attr docutils literal"><span class="pre">curY</span></code></li>
+<li><code class="xref py py-attr docutils literal"><span class="pre">t</span></code></li>
+<li><code class="xref py py-attr docutils literal"><span class="pre">isOver</span></code></li>
+</ol>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns state:</th><td class="field-body">current state in a tuple form</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Board.Board.setS">
+<code class="descname">setS</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Board.html#Board.setS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Board.Board.setS" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Board.Board.setS" title="Tetris.mods.Board.Board.setS"><code class="xref py py-meth docutils literal"><span class="pre">setS()</span></code></a> sets MDP&#8217;s state to given <em>other</em>.</p>
+<p>The format of <em>other</em> should be the same as that returned by <a class="reference internal" href="#Tetris.mods.Board.Board.S" title="Tetris.mods.Board.Board.S"><code class="xref py py-meth docutils literal"><span class="pre">S()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<em>tuple</em>) &#8211; state to be set</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-Tetris.mods.utils">
+<span id="tetris-mods-utils-module"></span><h2>Tetris.mods.utils module<a class="headerlink" href="#module-Tetris.mods.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="Tetris.mods.utils.StateActionNode">
+<em class="property">class </em><code class="descclassname">Tetris.mods.utils.</code><code class="descname">StateActionNode</code><span class="sig-paren">(</span><em>N</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/utils.html#StateActionNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.utils.StateActionNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="Tetris.mods.utils.StateActionNode.get_child">
+<code class="descname">get_child</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/utils.html#StateActionNode.get_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.utils.StateActionNode.get_child" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.utils.StateActionNode.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>reward</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/utils.html#StateActionNode.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.utils.StateActionNode.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.utils.StateActionNode.get_Qs">
+<code class="descname">get_Qs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/utils.html#StateActionNode.get_Qs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.utils.StateActionNode.get_Qs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.utils.StateActionNode.backprop">
+<code class="descname">backprop</code><span class="sig-paren">(</span><em>reward</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/utils.html#StateActionNode.backprop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.utils.StateActionNode.backprop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Tetris.mods.utils.Node">
+<em class="property">class </em><code class="descclassname">Tetris.mods.utils.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>N</em>, <em>rot=0</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/utils.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.utils.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="Tetris.mods.utils.Node.get_child">
+<code class="descname">get_child</code><span class="sig-paren">(</span><em>action</em>, <em>rotinc=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/utils.html#Node.get_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.utils.Node.get_child" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.utils.Node.mov_child">
+<code class="descname">mov_child</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/utils.html#Node.mov_child"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.utils.Node.mov_child" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.utils.Node.avail_actions">
+<code class="descname">avail_actions</code><span class="sig-paren">(</span><em>maxrot</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/utils.html#Node.avail_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.utils.Node.avail_actions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-Tetris.mods">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-Tetris.mods" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tetris.mods package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-Tetris.mods.Authen">Tetris.mods.Authen module</a></li>
+<li><a class="reference internal" href="#module-Tetris.mods.Board">Tetris.mods.Board module</a></li>
+<li><a class="reference internal" href="#module-Tetris.mods.utils">Tetris.mods.utils module</a></li>
+<li><a class="reference internal" href="#module-Tetris.mods">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Tetris.html"
+                        title="previous chapter">Tetris package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Tetris.mods.Interfaces.html"
+                        title="next chapter">Tetris.mods.Interfaces package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Tetris.mods.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Tetris.mods.Interfaces.html" title="Tetris.mods.Interfaces package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Tetris.html" title="Tetris package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Tetris  documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="Tetris.html" >Tetris package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

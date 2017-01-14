@@ -1,12 +1,13 @@
-﻿from Machines.Machine import *
-from Machines.MCMachine import *
-from Interfaces.BoardInterface import *
-from Authen import *
-import os
+﻿import os
 import numpy as np
 import _pickle
 import time
 import traceback
+
+from mods.Machines.Machine import *
+from mods.Machines.MCMachine import *
+from mods.Interfaces.BoardInterface import *
+from mods.Authen import *
 
 class Officer:
 	def main_loop(self):
@@ -38,7 +39,7 @@ class Officer:
 				self.visual_play('save',filename=filename)
 				
 			elif option==3:
-				from Machines.NeuralMachine import CNNMachine
+				from mods.Machines.NeuralMachine import CNNMachine
 				machine = CNNMachine()
 				machine.compile_model()
 				self.visual_play('machine', machine=machine)
@@ -84,7 +85,7 @@ class Officer:
 		env = Env()
 
 		if env.use_wx:
-			from Interfaces.VisualInterface import VisualInterface
+			from mods.Interfaces.VisualInterface import VisualInterface
 			import wx
 			app = wx.App()
 
@@ -115,7 +116,7 @@ class Officer:
 			print(traceback.format_exc())
 			
 	def what(self):
-		from Machines.NeuralMachine import CNNMachine
+		from mods.Machines.NeuralMachine import CNNMachine
 		machine = CNNMachine()
 		machine.load_dataset()
 		machine.compile_model()
@@ -131,13 +132,13 @@ class Officer:
 			
 
 	def train(self):
-		from Machines.NeuralMachine import CNNMachine
+		from mods.Machines.NeuralMachine import CNNMachine
 		machine = CNNMachine()
 		machine.train()
 
 	def PG(self):
-		from Machines.NeuralMachine import CNNMachine
-		from Interfaces.RLInterface import PGInterface
+		from mods.Machines.NeuralMachine import CNNMachine
+		from mods.Interfaces.RLInterface import PGInterface
 		machine = CNNMachine()
 		machine.compile_model()
 		interface = PGInterface('PGBoard', machine)
@@ -161,8 +162,8 @@ class Officer:
 				_pickle.dump(history, f)
 			
 	def DQN(self):
-		from Machines.NeuralMachine import CNNMachine
-		from Interfaces.RLInterface import DQNRLInterface
+		from mods.Machines.NeuralMachine import CNNMachine
+		from mods.Interfaces.RLInterface import DQNRLInterface
 		machine = CNNMachine()
 		machine.compile_model()
 		interface = DQNRLInterface('DQN', machine)

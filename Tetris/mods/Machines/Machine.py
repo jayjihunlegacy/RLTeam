@@ -1,13 +1,14 @@
 ﻿import numpy as np
-from Board import *
-from Interfaces.BoardInterface import *
-from abc import ABCMeta, abstractmethod
 import _pickle
 import copy
 from multiprocessing import Pool
 import os
 from functools import reduce
-from utils import *
+from abc import ABCMeta, abstractmethod
+
+from ..utils import *
+from ..Board import *
+from ..Interfaces.BoardInterface import *
 
 def one(tup):
 	machine, n = tup
@@ -20,17 +21,39 @@ def one(tup):
 	return results
 
 class Machine:
+	"""
+	:class:`Machine` is an abstract base class for Tetris agents.
+
+	:meth:`Pi` must be implemented.
+	"""
 	__metaclass__ = ABCMeta
 	minf = -float('inf')
 	maxf = float('inf')
-	def initialize(self):
-		pass
 
 	@abstractmethod
 	def Pi(self, state):
+		"""
+		:meth:`Pi` returns a probability distribution of actions given *state*.
+
+		:param tuple state: board state in a tuple form.
+		See :meth:`Tetris.mods.Board.Board.S` for details.
+
+		:returns pi: probability distribution of actions. must sum to 1.
+		:rtype: list
+		"""
 		raise NotImplementedError()
 			
-	def evaluate(self, N=12):
+	def evaluate(self, N=10000):
+		"""
+		:meth:`Evaluate` evaluates expected return of start state given policy.
+
+		Simulate a game with *N* many games and return mean and variance of returns.
+
+		:param int N: number of roll-outs
+
+		:returns result: (mean(return), var(return))
+		:rtype: tuple
+		"""
 		proc_num = os.cpu_count()
 		s = time.time()
 		with Pool() as pool:
@@ -42,17 +65,35 @@ class Machine:
 		return np.mean(Rs), np.var(Rs)
 		
 	def phi(self, state):
+		"""
+		:meth:`phi` encodes state tuple into (2, 22, 10) tensor.
+		
+		:param tuple state: board state in a tuple form.
+		See :meth:`Tetris.mods.Board.Board.S` for details.
+		
+		:return phi: binary (2, 22, 10) state tensor
+		:rtype: numpy.ndarray
+		"""
 		board, pieces, piececoords, curX, curY, ticks, isOver = state
 		
 		x_piece = np.zeros((Board.height, Board.width), dtype='int32')
 		Xs = curX + piececoords[:, 0]
 		Ys = curY - piececoords[:, 1]
-		x_piece[Ys,Xs]=1
-		
-		X = np.stack([(board > 0).astype('int32'), x_piece])		
+		x_piece[Ys,Xs]=1		
+		X = np.stack([(board > 0).astype('int32'), x_piece])
+
 		return X
 
 	def heuristic_V(self, S):
+		"""
+		:meth:`heuristic_V` evaluates Value of a state heuristically.
+
+		:param S: binary (2, 22, 10) state tensor
+		:type S: numpy.ndarray
+
+		:return V: heuristic value
+		:rtype: int or float
+		"""
 		#1. number of holes.
 		hole_num = 0
 		upperExist = np.zeros(Board.width).astype('bool')

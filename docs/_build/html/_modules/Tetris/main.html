@@ -1,0 +1,286 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tetris.main &mdash; Tetris  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Tetris  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Tetris  documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Tetris.main</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">_pickle</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+
+<span class="kn">from</span> <span class="nn">Tetris.mods.Authen</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">Tetris.mods.Machines.Machine</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">Tetris.mods.Machines.MCMachine</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">Tetris.mods.Interfaces.BoardInterface</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="Officer"><a class="viewcode-back" href="../../Tetris.html#Tetris.main.Officer">[docs]</a><span class="k">class</span> <span class="nc">Officer</span><span class="p">:</span>
+<div class="viewcode-block" id="Officer.main_loop"><a class="viewcode-back" href="../../Tetris.html#Tetris.main.Officer.main_loop">[docs]</a>	<span class="k">def</span> <span class="nf">main_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+			<span class="k">print</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;Choose option.</span>
+<span class="s1">1. Human Play.</span>
+<span class="s1">2. Saved Play.</span>
+<span class="s1">3. Neural Play.</span>
+<span class="s1">4. Heuristic Play.</span>
+<span class="s1"> 41. StochasticMachine2</span>
+
+<span class="s1"> 42. MCTC Play.</span>
+<span class="s1"> 43. micro MC Play.</span>
+<span class="s1"> 44. macro MC Play.</span>
+<span class="s1"> </span>
+
+<span class="s1">5. Generate Demos.</span>
+<span class="s1">6. any...</span>
+<span class="s1">7. Train Neural Agent.</span>
+<span class="s1">8. PG RL</span>
+<span class="s1">9. evaluate</span>
+<span class="s1">0. Quit&#39;&#39;&#39;</span><span class="p">)</span>
+			<span class="n">option</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&#39;</span><span class="p">))</span>
+			<span class="k">if</span> <span class="n">option</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">visual_play</span><span class="p">(</span><span class="s1">&#39;human&#39;</span><span class="p">)</span>
+				
+			<span class="k">elif</span> <span class="n">option</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+				<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;Human_27_2016-12-10_19-33-10-090293.sav&#39;</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">visual_play</span><span class="p">(</span><span class="s1">&#39;save&#39;</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+				
+			<span class="k">elif</span> <span class="n">option</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+				<span class="kn">from</span> <span class="nn">mods.Machines.NeuralMachine</span> <span class="kn">import</span> <span class="n">CNNMachine</span>
+				<span class="n">machine</span> <span class="o">=</span> <span class="n">CNNMachine</span><span class="p">()</span>
+				<span class="n">machine</span><span class="o">.</span><span class="n">compile_model</span><span class="p">()</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">visual_play</span><span class="p">(</span><span class="s1">&#39;machine&#39;</span><span class="p">,</span> <span class="n">machine</span><span class="o">=</span><span class="n">machine</span><span class="p">)</span>
+				
+			<span class="k">elif</span> <span class="n">option</span><span class="o">==</span><span class="mi">4</span><span class="p">:</span>
+				<span class="n">machine</span> <span class="o">=</span> <span class="n">StochasticMachine</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">visual_play</span><span class="p">(</span><span class="s1">&#39;machine&#39;</span><span class="p">,</span> <span class="n">machine</span><span class="o">=</span><span class="n">machine</span><span class="p">)</span>
+
+			<span class="k">elif</span> <span class="n">option</span><span class="o">==</span><span class="mi">41</span><span class="p">:</span>
+				<span class="n">machine</span> <span class="o">=</span> <span class="n">StochasticMachine2</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">visual_play</span><span class="p">(</span><span class="s1">&#39;machine&#39;</span><span class="p">,</span> <span class="n">machine</span><span class="o">=</span><span class="n">machine</span><span class="p">)</span>
+
+			<span class="k">elif</span> <span class="n">option</span><span class="o">==</span><span class="mi">42</span><span class="p">:</span>
+				<span class="n">machine</span> <span class="o">=</span> <span class="n">MCTSMachine</span><span class="p">()</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">visual_play</span><span class="p">(</span><span class="s1">&#39;machine&#39;</span><span class="p">,</span> <span class="n">machine</span><span class="o">=</span><span class="n">machine</span><span class="p">)</span>
+
+			<span class="k">elif</span> <span class="n">option</span><span class="o">==</span><span class="mi">43</span><span class="p">:</span>
+				<span class="n">machine</span> <span class="o">=</span> <span class="n">MicroMCMachine</span><span class="p">()</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">visual_play</span><span class="p">(</span><span class="s1">&#39;machine&#39;</span><span class="p">,</span> <span class="n">machine</span><span class="o">=</span><span class="n">machine</span><span class="p">)</span>
+
+			<span class="k">elif</span> <span class="n">option</span><span class="o">==</span><span class="mi">44</span><span class="p">:</span>
+				<span class="n">machine</span> <span class="o">=</span> <span class="n">MacroMCMachine</span><span class="p">()</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">visual_play</span><span class="p">(</span><span class="s1">&#39;machine&#39;</span><span class="p">,</span> <span class="n">machine</span><span class="o">=</span><span class="n">machine</span><span class="p">)</span>
+			
+
+			<span class="k">elif</span> <span class="n">option</span><span class="o">==</span><span class="mi">5</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">generate_demos</span><span class="p">()</span>
+			<span class="k">elif</span> <span class="n">option</span><span class="o">==</span><span class="mi">6</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">what</span><span class="p">()</span>
+			<span class="k">elif</span> <span class="n">option</span><span class="o">==</span><span class="mi">7</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+			<span class="k">elif</span> <span class="n">option</span><span class="o">==</span><span class="mi">8</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">PG</span><span class="p">()</span>
+
+			<span class="k">elif</span> <span class="n">option</span><span class="o">==</span><span class="mi">9</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+
+
+			<span class="k">elif</span> <span class="n">option</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+				<span class="k">break</span>
+			</div>
+<div class="viewcode-block" id="Officer.visual_play"><a class="viewcode-back" href="../../Tetris.html#Tetris.main.Officer.visual_play">[docs]</a>	<span class="k">def</span> <span class="nf">visual_play</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_type</span><span class="p">,</span> <span class="n">machine</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="n">env</span> <span class="o">=</span> <span class="n">Env</span><span class="p">()</span>
+
+		<span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">use_wx</span><span class="p">:</span>
+			<span class="kn">from</span> <span class="nn">mods.Interfaces.VisualInterface</span> <span class="kn">import</span> <span class="n">VisualInterface</span>
+			<span class="kn">import</span> <span class="nn">wx</span>
+			<span class="n">app</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">App</span><span class="p">()</span>
+
+			<span class="n">interface</span> <span class="o">=</span> <span class="n">VisualInterface</span><span class="p">(</span><span class="n">input_type</span><span class="o">=</span><span class="n">input_type</span><span class="p">,</span> <span class="n">machine</span><span class="o">=</span><span class="n">machine</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">interface</span> <span class="o">=</span> <span class="n">BoardInterface</span><span class="p">(</span><span class="n">input_type</span><span class="o">=</span><span class="n">input_type</span><span class="p">,</span> <span class="n">machine</span><span class="o">=</span><span class="n">machine</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+
+		<span class="n">interface</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+		<span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">use_wx</span><span class="p">:</span>
+			<span class="n">app</span><span class="o">.</span><span class="n">MainLoop</span><span class="p">()</span>
+
+<span class="c1">###############################################################################</span>
+</div>
+<div class="viewcode-block" id="Officer.evaluate"><a class="viewcode-back" href="../../Tetris.html#Tetris.main.Officer.evaluate">[docs]</a>	<span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">machine</span> <span class="o">=</span> <span class="n">StochasticMachine</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+		<span class="n">score</span> <span class="o">=</span> <span class="n">machine</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+		<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Score :&#39;</span><span class="p">,</span><span class="n">score</span><span class="p">)</span>
+		</div>
+<div class="viewcode-block" id="Officer.generate_demos"><a class="viewcode-back" href="../../Tetris.html#Tetris.main.Officer.generate_demos">[docs]</a>	<span class="k">def</span> <span class="nf">generate_demos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">num_of_demo</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+		<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()))</span>			
+		<span class="k">try</span><span class="p">:</span>	
+			<span class="n">teacher</span> <span class="o">=</span> <span class="n">StochasticMachine</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+			<span class="n">interface</span> <span class="o">=</span> <span class="n">BoardInterface</span><span class="p">(</span><span class="n">machine</span><span class="o">=</span><span class="n">teacher</span><span class="p">,</span> <span class="n">collect_traj</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">save_traj</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_of_demo</span><span class="p">):</span>
+				<span class="n">interface</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="k">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+			</div>
+<div class="viewcode-block" id="Officer.what"><a class="viewcode-back" href="../../Tetris.html#Tetris.main.Officer.what">[docs]</a>	<span class="k">def</span> <span class="nf">what</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="kn">from</span> <span class="nn">mods.Machines.NeuralMachine</span> <span class="kn">import</span> <span class="n">CNNMachine</span>
+		<span class="n">machine</span> <span class="o">=</span> <span class="n">CNNMachine</span><span class="p">()</span>
+		<span class="n">machine</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">()</span>
+		<span class="n">machine</span><span class="o">.</span><span class="n">compile_model</span><span class="p">()</span>
+		<span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>		
+		<span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,))</span>
+		<span class="n">Xs</span> <span class="o">=</span> <span class="n">machine</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+		<span class="n">Zs</span> <span class="o">=</span> <span class="n">machine</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+		<span class="n">Ys</span> <span class="o">=</span> <span class="n">machine</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Xs</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">X</span><span class="p">,</span><span class="n">Z</span><span class="p">,</span><span class="n">Y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span><span class="n">Zs</span><span class="p">,</span><span class="n">Ys</span><span class="p">):</span>
+			<span class="k">print</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+			<span class="k">print</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+			<span class="k">print</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+			
+</div>
+<div class="viewcode-block" id="Officer.train"><a class="viewcode-back" href="../../Tetris.html#Tetris.main.Officer.train">[docs]</a>	<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="kn">from</span> <span class="nn">mods.Machines.NeuralMachine</span> <span class="kn">import</span> <span class="n">CNNMachine</span>
+		<span class="n">machine</span> <span class="o">=</span> <span class="n">CNNMachine</span><span class="p">()</span>
+		<span class="n">machine</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Officer.PG"><a class="viewcode-back" href="../../Tetris.html#Tetris.main.Officer.PG">[docs]</a>	<span class="k">def</span> <span class="nf">PG</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="kn">from</span> <span class="nn">mods.Machines.NeuralMachine</span> <span class="kn">import</span> <span class="n">CNNMachine</span>
+		<span class="kn">from</span> <span class="nn">mods.Interfaces.RLInterface</span> <span class="kn">import</span> <span class="n">PGInterface</span>
+		<span class="n">machine</span> <span class="o">=</span> <span class="n">CNNMachine</span><span class="p">()</span>
+		<span class="n">machine</span><span class="o">.</span><span class="n">compile_model</span><span class="p">()</span>
+		<span class="n">interface</span> <span class="o">=</span> <span class="n">PGInterface</span><span class="p">(</span><span class="s1">&#39;PGBoard&#39;</span><span class="p">,</span> <span class="n">machine</span><span class="p">)</span>
+		
+		<span class="n">episode_num</span><span class="o">=</span><span class="mi">0</span>
+		<span class="n">history</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;r&#39;</span><span class="p">:[],</span> <span class="s1">&#39;ticks&#39;</span><span class="p">:[]}</span>
+		<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Start Policy Gradient&#39;</span><span class="p">)</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+				<span class="n">r</span><span class="p">,</span> <span class="n">ticks</span> <span class="o">=</span> <span class="n">interface</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>	
+				<span class="n">history</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+				<span class="n">history</span><span class="p">[</span><span class="s1">&#39;ticks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ticks</span><span class="p">)</span>		
+				<span class="n">episode_num</span><span class="o">+=</span><span class="mi">1</span>
+				<span class="k">if</span> <span class="n">episode_num</span><span class="o">%</span><span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Episode #</span><span class="si">%i</span><span class="s1">.&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">episode_num</span><span class="p">,))</span>
+					<span class="n">machine</span><span class="o">.</span><span class="n">save_weights</span><span class="p">()</span>
+					<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;PG_History.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+						<span class="n">_pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>		
+			<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;PG_History.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+				<span class="n">_pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+			</div>
+<div class="viewcode-block" id="Officer.DQN"><a class="viewcode-back" href="../../Tetris.html#Tetris.main.Officer.DQN">[docs]</a>	<span class="k">def</span> <span class="nf">DQN</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="kn">from</span> <span class="nn">mods.Machines.NeuralMachine</span> <span class="kn">import</span> <span class="n">CNNMachine</span>
+		<span class="kn">from</span> <span class="nn">mods.Interfaces.RLInterface</span> <span class="kn">import</span> <span class="n">DQNRLInterface</span>
+		<span class="n">machine</span> <span class="o">=</span> <span class="n">CNNMachine</span><span class="p">()</span>
+		<span class="n">machine</span><span class="o">.</span><span class="n">compile_model</span><span class="p">()</span>
+		<span class="n">interface</span> <span class="o">=</span> <span class="n">DQNRLInterface</span><span class="p">(</span><span class="s1">&#39;DQN&#39;</span><span class="p">,</span> <span class="n">machine</span><span class="p">)</span>
+		
+		<span class="n">episode_num</span><span class="o">=</span><span class="mi">0</span>
+		<span class="n">history</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;score&#39;</span><span class="p">:[],</span> <span class="s1">&#39;ticks&#39;</span><span class="p">:[]}</span>
+		<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Start DQN!&quot;</span><span class="p">)</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+				<span class="n">score</span><span class="p">,</span> <span class="n">ticks</span> <span class="o">=</span> <span class="n">interface</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>			
+				<span class="n">history</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+				<span class="n">history</span><span class="p">[</span><span class="s1">&#39;ticks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ticks</span><span class="p">)</span>
+				<span class="n">episode_num</span><span class="o">+=</span><span class="mi">1</span>
+			
+				<span class="k">if</span> <span class="n">episode_num</span><span class="o">%</span><span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Episode #</span><span class="si">%i</span><span class="s1">.&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">episode_num</span><span class="p">,))</span>
+					
+		<span class="k">except</span><span class="p">:</span>
+			<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;DQN_History.pkl&#39;</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+				<span class="n">_pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div></div>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../Tetris.html#Tetris.main.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+	<span class="n">officer</span> <span class="o">=</span> <span class="n">Officer</span><span class="p">()</span>
+	<span class="n">officer</span><span class="o">.</span><span class="n">main_loop</span><span class="p">()</span>
+	
+</div>
+<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Tetris  documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>
