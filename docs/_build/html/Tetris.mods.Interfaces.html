@@ -2,11 +2,11 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tetris.mods.Interfaces package &mdash; Tetris  documentation</title>
+    <title>Tetris.mods.Interfaces package &#8212; Tetris  documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -44,9 +44,9 @@
         <li class="right" >
           <a href="Tetris.mods.html" title="Tetris.mods package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Tetris  documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="Tetris.html" >Tetris package</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="Tetris.mods.html" accesskey="U">Tetris.mods package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Tetris  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="Tetris.html" >Tetris package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="Tetris.mods.html" accesskey="U">Tetris.mods package</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -90,7 +90,7 @@
 
 <dl class="attribute">
 <dt id="Tetris.mods.Interfaces.BoardInterface.InputType.type2code">
-<code class="descname">type2code</code><em class="property"> = {'machine': 0, 'human': 1, 'save': 2}</em><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.InputType.type2code" title="Permalink to this definition">¶</a></dt>
+<code class="descname">type2code</code><em class="property"> = {'human': 1, 'machine': 0, 'save': 2}</em><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.InputType.type2code" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -102,7 +102,7 @@
 
 <dl class="class">
 <dt id="Tetris.mods.Interfaces.BoardInterface.BoardInterface">
-<em class="property">class </em><code class="descclassname">Tetris.mods.Interfaces.BoardInterface.</code><code class="descname">BoardInterface</code><span class="sig-paren">(</span><em>input_type='machine'</em>, <em>machine=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#BoardInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">Tetris.mods.Interfaces.BoardInterface.</code><code class="descname">BoardInterface</code><span class="sig-paren">(</span><em>input_type='machine'</em>, <em>machine=None</em>, <em>maxtick=-1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#BoardInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface"><code class="xref py py-class docutils literal"><span class="pre">BoardInterface</span></code></a> defines basic functionalities as interface. No visual module is implemented.
 To use visual functionalities, use <code class="xref py py-class docutils literal"><span class="pre">VisualInterface</span></code>.</p>
@@ -125,6 +125,18 @@ To use visual functionalities, use <code class="xref py py-class docutils litera
 </dd></dl>
 
 <dl class="attribute">
+<dt id="Tetris.mods.Interfaces.BoardInterface.BoardInterface.width">
+<code class="descname">width</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Width of <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.board" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.board"><code class="xref py py-attr docutils literal"><span class="pre">board</span></code></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Interfaces.BoardInterface.BoardInterface.height">
+<code class="descname">height</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.height" title="Permalink to this definition">¶</a></dt>
+<dd><p>Height of <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.board" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.board"><code class="xref py py-attr docutils literal"><span class="pre">board</span></code></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="Tetris.mods.Interfaces.BoardInterface.BoardInterface.machine">
 <code class="descname">machine</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.machine" title="Permalink to this definition">¶</a></dt>
 <dd><p><a class="reference internal" href="Tetris.mods.Machines.html#module-Tetris.mods.Machines.Machine" title="Tetris.mods.Machines.Machine"><code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Machines.Machine</span></code></a> instance which may play Tetris.
@@ -141,12 +153,6 @@ None if no machine is provided.</p>
 <dt id="Tetris.mods.Interfaces.BoardInterface.BoardInterface.isOver">
 <code class="descname">isOver</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.isOver" title="Permalink to this definition">¶</a></dt>
 <dd><p>True is over. False otherwise.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Tetris.mods.Interfaces.BoardInterface.BoardInterface.numLinesRemoved">
-<code class="descname">numLinesRemoved</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.numLinesRemoved" title="Permalink to this definition">¶</a></dt>
-<dd><p>Total number of lines removed since beginning. Starts from 0.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -180,6 +186,7 @@ None if no machine is provided.</p>
 <ol class="arabic simple">
 <li>save_hist</li>
 <li>save_traj</li>
+<li>refresh_traj</li>
 <li>collect_traj</li>
 <li>collect_hist</li>
 <li>verbose_gameover</li>
@@ -197,9 +204,57 @@ explanation about all the settings.</p>
 <dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.initialize" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.initialize"><code class="xref py py-meth docutils literal"><span class="pre">initialize()</span></code></a> initializes interface.</p>
 <ol class="arabic simple">
 <li>clear <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.actionhistory" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.actionhistory"><code class="xref py py-attr docutils literal"><span class="pre">actionhistory</span></code></a>, <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.piecehistory" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.piecehistory"><code class="xref py py-attr docutils literal"><span class="pre">piecehistory</span></code></a>, <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.trajectory" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.trajectory"><code class="xref py py-attr docutils literal"><span class="pre">trajectory</span></code></a>.</li>
-<li>reset <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.numLinesRemoved" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.numLinesRemoved"><code class="xref py py-attr docutils literal"><span class="pre">numLinesRemoved</span></code></a>, <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.G" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.G"><code class="xref py py-attr docutils literal"><span class="pre">G</span></code></a>.</li>
+<li>reset <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.G" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.G"><code class="xref py py-attr docutils literal"><span class="pre">G</span></code></a>.</li>
 <li>set <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.board" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.board"><code class="xref py py-attr docutils literal"><span class="pre">board</span></code></a> to start state(S0) by calling <a class="reference internal" href="Tetris.mods.html#Tetris.mods.Board.Board.S0" title="Tetris.mods.Board.Board.S0"><code class="xref py py-meth docutils literal"><span class="pre">Tetris.mods.Board.Board.S0()</span></code></a>.</li>
 </ol>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.BoardInterface.BoardInterface.S">
+<code class="descname">S</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#BoardInterface.S"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.S" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.S" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.S"><code class="xref py py-meth docutils literal"><span class="pre">S()</span></code></a> returns a current state of <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.board" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.board"><code class="xref py py-attr docutils literal"><span class="pre">board</span></code></a> in a tuple form.</p>
+<p>Tuple contains:</p>
+<ol class="arabic simple">
+<li>Copied matrix of <code class="xref py py-attr docutils literal"><span class="pre">table</span></code></li>
+<li>Copied list of <code class="xref py py-attr docutils literal"><span class="pre">pieces</span></code></li>
+<li>Copied matrix of <code class="xref py py-attr docutils literal"><span class="pre">piececoords</span></code></li>
+<li><code class="xref py py-attr docutils literal"><span class="pre">curX</span></code></li>
+<li><code class="xref py py-attr docutils literal"><span class="pre">curY</span></code></li>
+<li><code class="xref py py-attr docutils literal"><span class="pre">t</span></code></li>
+<li><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.isOver" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.isOver"><code class="xref py py-attr docutils literal"><span class="pre">isOver</span></code></a></li>
+</ol>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns state:</th><td class="field-body">current state in a tuple form</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.BoardInterface.BoardInterface.S0">
+<code class="descname">S0</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#BoardInterface.S0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.S0" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.S0" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.S0"><code class="xref py py-meth docutils literal"><span class="pre">S0()</span></code></a> sets <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.board" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.board"><code class="xref py py-attr docutils literal"><span class="pre">board</span></code></a> to a start state.</p>
+<p>#TODO explain more in detail.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.BoardInterface.BoardInterface.setS">
+<code class="descname">setS</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#BoardInterface.setS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.setS" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.setS" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.setS"><code class="xref py py-meth docutils literal"><span class="pre">setS()</span></code></a> sets <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.board" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.board"><code class="xref py py-attr docutils literal"><span class="pre">board</span></code></a>&#8216;s state to given <em>other</em>. Set states <strong>by value</strong>, not <strong>by reference</strong>.</p>
+<p>The format of <em>other</em> should be the same as that returned by <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.S" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.S"><code class="xref py py-meth docutils literal"><span class="pre">S()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<em>tuple</em>) &#8211; state to be set</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -224,17 +279,10 @@ explanation about all the settings.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="Tetris.mods.Interfaces.BoardInterface.BoardInterface.OnTimer">
-<code class="descname">OnTimer</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#BoardInterface.OnTimer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.OnTimer" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.OnTimer" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.OnTimer"><code class="xref py py-meth docutils literal"><span class="pre">OnTimer()</span></code></a> is called by <code class="xref py py-attr docutils literal"><span class="pre">timer</span></code>, and it ticks the MDP by calling <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.tick" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.tick"><code class="xref py py-meth docutils literal"><span class="pre">tick()</span></code></a>.</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="Tetris.mods.Interfaces.BoardInterface.BoardInterface.tick">
-<code class="descname">tick</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#BoardInterface.tick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.tick" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.tick" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.tick"><code class="xref py py-meth docutils literal"><span class="pre">tick()</span></code></a> increases a timestep of MDP.</p>
+<code class="descname">tick</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#BoardInterface.tick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.tick" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.tick" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.tick"><code class="xref py py-meth docutils literal"><span class="pre">tick()</span></code></a> call <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.OnTick" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.OnTick"><code class="xref py py-meth docutils literal"><span class="pre">OnTick()</span></code></a>.</p>
 <p>If the game is over, call <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.gameover" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.gameover"><code class="xref py py-meth docutils literal"><span class="pre">gameover()</span></code></a>.</p>
-<p>Otherwise, call <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.OnTick" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.OnTick"><code class="xref py py-meth docutils literal"><span class="pre">OnTick()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -282,6 +330,10 @@ explanation about all the settings.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>action</strong> (<em>int</em>) &#8211; action to perform</td>
 </tr>
+<tr class="field-even field"><th class="field-name">Returns result:</th><td class="field-body">(reward, isvalid)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
 </tbody>
 </table>
 </dd></dl>
@@ -290,20 +342,6 @@ explanation about all the settings.</p>
 <dt id="Tetris.mods.Interfaces.BoardInterface.BoardInterface.start">
 <code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#BoardInterface.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>#TODO</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="Tetris.mods.Interfaces.BoardInterface.BoardInterface.line_removed">
-<code class="descname">line_removed</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#BoardInterface.line_removed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.line_removed" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface.line_removed" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface.line_removed"><code class="xref py py-meth docutils literal"><span class="pre">line_removed()</span></code></a> adds <code class="xref py py-attr docutils literal"><span class="pre">numLinedRemoved</span></code> given <em>num</em>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) &#8211; number of lines newly removed</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="method">
@@ -316,20 +354,33 @@ explanation about all the settings.</p>
 
 <dl class="class">
 <dt id="Tetris.mods.Interfaces.BoardInterface.DummyInterface">
-<em class="property">class </em><code class="descclassname">Tetris.mods.Interfaces.BoardInterface.</code><code class="descname">DummyInterface</code><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#DummyInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.DummyInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">Tetris.mods.Interfaces.BoardInterface.</code><code class="descname">DummyInterface</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#DummyInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.DummyInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface"><code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Interfaces.BoardInterface.BoardInterface</span></code></a></p>
 <p><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.DummyInterface" title="Tetris.mods.Interfaces.BoardInterface.DummyInterface"><code class="xref py py-class docutils literal"><span class="pre">DummyInterface</span></code></a> is an <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface"><code class="xref py py-class docutils literal"><span class="pre">BoardInterface</span></code></a> that has no additional functionalities.</p>
 <p>This class is usually as an interface of dummy board which is used for simulation in MC machines.</p>
 <dl class="method">
-<dt id="Tetris.mods.Interfaces.BoardInterface.DummyInterface.gameover">
-<code class="descname">gameover</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#DummyInterface.gameover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.DummyInterface.gameover" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.DummyInterface.gameover" title="Tetris.mods.Interfaces.BoardInterface.DummyInterface.gameover"><code class="xref py py-meth docutils literal"><span class="pre">gameover()</span></code></a> does nothing.</p>
+<dt id="Tetris.mods.Interfaces.BoardInterface.DummyInterface.perform_action">
+<code class="descname">perform_action</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#DummyInterface.perform_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.DummyInterface.perform_action" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.DummyInterface.perform_action" title="Tetris.mods.Interfaces.BoardInterface.DummyInterface.perform_action"><code class="xref py py-meth docutils literal"><span class="pre">perform_action()</span></code></a> performs <em>action</em> by calling <a class="reference internal" href="Tetris.mods.html#Tetris.mods.Board.Board.T" title="Tetris.mods.Board.Board.T"><code class="xref py py-meth docutils literal"><span class="pre">Tetris.mods.Board.Board.T()</span></code></a>.</p>
+<p>Accumulate resulting reward to <code class="xref py py-attr docutils literal"><span class="pre">G</span></code>.               For performance, no additional option is provided in this method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>action</strong> (<em>int</em>) &#8211; action to perform</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns result:</th><td class="field-body">(reward, isvalid)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
-<dt id="Tetris.mods.Interfaces.BoardInterface.DummyInterface.line_removed">
-<code class="descname">line_removed</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#DummyInterface.line_removed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.DummyInterface.line_removed" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.DummyInterface.line_removed" title="Tetris.mods.Interfaces.BoardInterface.DummyInterface.line_removed"><code class="xref py py-meth docutils literal"><span class="pre">line_removed()</span></code></a> does nothing.</p>
+<dt id="Tetris.mods.Interfaces.BoardInterface.DummyInterface.gameover">
+<code class="descname">gameover</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/BoardInterface.html#DummyInterface.gameover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.BoardInterface.DummyInterface.gameover" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.DummyInterface.gameover" title="Tetris.mods.Interfaces.BoardInterface.DummyInterface.gameover"><code class="xref py py-meth docutils literal"><span class="pre">gameover()</span></code></a> does nothing.</p>
 </dd></dl>
 
 </dd></dl>
@@ -339,17 +390,209 @@ explanation about all the settings.</p>
 <span id="tetris-mods-interfaces-rlinterface-module"></span><h2>Tetris.mods.Interfaces.RLInterface module<a class="headerlink" href="#module-Tetris.mods.Interfaces.RLInterface" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="Tetris.mods.Interfaces.RLInterface.PGInterface">
-<em class="property">class </em><code class="descclassname">Tetris.mods.Interfaces.RLInterface.</code><code class="descname">PGInterface</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#PGInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.PGInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">Tetris.mods.Interfaces.RLInterface.</code><code class="descname">PGInterface</code><span class="sig-paren">(</span><em>machine</em>, <em>pgmode</em>, <em>lr=0.0001</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#PGInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.PGInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface"><code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Interfaces.BoardInterface.BoardInterface</span></code></a></p>
+<p><a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.PGInterface" title="Tetris.mods.Interfaces.RLInterface.PGInterface"><code class="xref py py-class docutils literal"><span class="pre">PGInterface</span></code></a> is an interface that can run policy gradient algorithms.   It runs several policy gradient algorithms on its <code class="xref py py-attr docutils literal"><span class="pre">machine</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>machine</strong> (<code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Machine.Machine</span></code>) &#8211; machine to play and be trained</li>
+<li><strong>pgmode</strong> (<em>str</em>) &#8211; type of Policy Gradient algorithms. &#8216;vanilla&#8217;, &#8216;pgt&#8217;,        and &#8216;actorcritic&#8217; are available.</li>
+<li><strong>lr</strong> (<em>float</em>) &#8211; learning rate</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="Tetris.mods.Interfaces.RLInterface.PGInterface.Gs">
+<code class="descname">Gs</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.Gs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hisotry of Return throughout training.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Interfaces.RLInterface.PGInterface.Hs">
+<code class="descname">Hs</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.Hs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hisotry of horizon length throughout training.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Interfaces.RLInterface.PGInterface.learn">
+<code class="descname">learn</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.learn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Learning function. Learns by calling <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.train_core" title="Tetris.mods.Interfaces.RLInterface.PGInterface.train_core"><code class="xref py py-attr docutils literal"><span class="pre">train_core</span></code></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Interfaces.RLInterface.PGInterface.train_core">
+<code class="descname">train_core</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.train_core" title="Permalink to this definition">¶</a></dt>
+<dd><p>Core training theano function.</p>
+</dd></dl>
+
 <dl class="method">
-<dt id="Tetris.mods.Interfaces.RLInterface.PGInterface.initialize">
-<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#PGInterface.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.initialize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="Tetris.mods.Interfaces.RLInterface.PGInterface.build_trainer_vanilla">
+<code class="descname">build_trainer_vanilla</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#PGInterface.build_trainer_vanilla"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.build_trainer_vanilla" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.build_trainer_vanilla" title="Tetris.mods.Interfaces.RLInterface.PGInterface.build_trainer_vanilla"><code class="xref py py-meth docutils literal"><span class="pre">build_trainer_vanilla()</span></code></a> compiles a <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.train_core" title="Tetris.mods.Interfaces.RLInterface.PGInterface.train_core"><code class="xref py py-attr docutils literal"><span class="pre">train_core</span></code></a> theano function which implements            <strong>Vanilla Policy Gradient algorithm</strong>, and algorithm-specific <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.learn" title="Tetris.mods.Interfaces.RLInterface.PGInterface.learn"><code class="xref py py-attr docutils literal"><span class="pre">learn</span></code></a> function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.RLInterface.PGInterface.build_trainer_pgt">
+<code class="descname">build_trainer_pgt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#PGInterface.build_trainer_pgt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.build_trainer_pgt" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.build_trainer_pgt" title="Tetris.mods.Interfaces.RLInterface.PGInterface.build_trainer_pgt"><code class="xref py py-meth docutils literal"><span class="pre">build_trainer_pgt()</span></code></a> compiles a <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.train_core" title="Tetris.mods.Interfaces.RLInterface.PGInterface.train_core"><code class="xref py py-attr docutils literal"><span class="pre">train_core</span></code></a> theano function which implements                <strong>PGT Policy Gradient algorithm</strong>, and algorithm-specific <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.learn" title="Tetris.mods.Interfaces.RLInterface.PGInterface.learn"><code class="xref py py-attr docutils literal"><span class="pre">learn</span></code></a> function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.RLInterface.PGInterface.build_trainer_actorcritic">
+<code class="descname">build_trainer_actorcritic</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#PGInterface.build_trainer_actorcritic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.build_trainer_actorcritic" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>NOT IMPLEMENTED</strong></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.RLInterface.PGInterface.train">
+<code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#PGInterface.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.train" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.train" title="Tetris.mods.Interfaces.RLInterface.PGInterface.train"><code class="xref py py-meth docutils literal"><span class="pre">train()</span></code></a> is a top-level train function.            Repeatedly calls <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.start" title="Tetris.mods.Interfaces.RLInterface.PGInterface.start"><code class="xref py py-meth docutils literal"><span class="pre">start()</span></code></a> to produce trajectories and learn.</p>
+<p>Every 100 episode, it saves history and model weights.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="Tetris.mods.Interfaces.RLInterface.PGInterface.start">
 <code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#PGInterface.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.start" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.start" title="Tetris.mods.Interfaces.RLInterface.PGInterface.start"><code class="xref py py-meth docutils literal"><span class="pre">start()</span></code></a> runs one episode and produces one trajectory.</p>
+<p>After each episode is done, it calls <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.PGInterface.learn" title="Tetris.mods.Interfaces.RLInterface.PGInterface.learn"><code class="xref py py-attr docutils literal"><span class="pre">learn</span></code></a> function to learn.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns (G, H):</th><td class="field-body">(Return, Horizon)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">(float, int)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface">
+<em class="property">class </em><code class="descclassname">Tetris.mods.Interfaces.RLInterface.</code><code class="descname">ValueRLInterface</code><span class="sig-paren">(</span><em>machine</em>, <em>rlmode</em>, <em>lr=0.0001</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#ValueRLInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Tetris.mods.Interfaces.BoardInterface.BoardInterface" title="Tetris.mods.Interfaces.BoardInterface.BoardInterface"><code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Interfaces.BoardInterface.BoardInterface</span></code></a></p>
+<p><a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface"><code class="xref py py-class docutils literal"><span class="pre">ValueRLInterface</span></code></a> is an interface that can run value-based learning algorithsm.         It runs several learning algorithms on its <code class="xref py py-attr docutils literal"><span class="pre">machine</span></code>.</p>
+<p>Value-Based learning algorithms are all basically forcing Bellman Equation on visited states.   Available training algorithms are:</p>
+<ol class="arabic simple">
+<li><strong>DQN</strong></li>
+<li><strong>Q-Learning</strong></li>
+<li><strong>SARSA</strong></li>
+<li><strong>Expected-SARSA</strong></li>
+</ol>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>machine</strong> (<code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Machine.Machine</span></code>) &#8211; machine to play and be trained</li>
+<li><strong>rlmode</strong> (<em>str</em>) &#8211; type of learning algorithms.         &#8216;q-learning&#8217;, &#8216;dqn&#8217;, &#8216;double-dqn&#8217;, &#8216;sarsa&#8217;, and &#8216;expected-sarsa&#8217; are available.</li>
+<li><strong>lr</strong> (<em>float</em>) &#8211; learning rate</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.Gs">
+<code class="descname">Gs</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.Gs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hisotry of Return throughout training.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.Hs">
+<code class="descname">Hs</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.Hs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hisotry of horizon length throughout training.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.Costs">
+<code class="descname">Costs</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.Costs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hisotry of Value-Approximation costs throughout training.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn">
+<code class="descname">learn</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Learning function. Learns by calling <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core"><code class="xref py py-attr docutils literal"><span class="pre">train_core</span></code></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core">
+<code class="descname">train_core</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core" title="Permalink to this definition">¶</a></dt>
+<dd><p>Core training theano function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_dqn">
+<code class="descname">build_trainer_dqn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#ValueRLInterface.build_trainer_dqn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_dqn" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_dqn" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_dqn"><code class="xref py py-meth docutils literal"><span class="pre">build_trainer_dqn()</span></code></a> compiles a <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core"><code class="xref py py-attr docutils literal"><span class="pre">train_core</span></code></a> theano function which implements                <strong>DQN</strong>, and algorithm-specific <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn"><code class="xref py py-attr docutils literal"><span class="pre">learn</span></code></a> function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_qlearning">
+<code class="descname">build_trainer_qlearning</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#ValueRLInterface.build_trainer_qlearning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_qlearning" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_qlearning" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_qlearning"><code class="xref py py-meth docutils literal"><span class="pre">build_trainer_qlearning()</span></code></a> compiles a <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core"><code class="xref py py-attr docutils literal"><span class="pre">train_core</span></code></a> theano function which implements          <strong>Q-Learning</strong>, and algorithm-specific <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn"><code class="xref py py-attr docutils literal"><span class="pre">learn</span></code></a> function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_sarsa">
+<code class="descname">build_trainer_sarsa</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#ValueRLInterface.build_trainer_sarsa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_sarsa" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_sarsa" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_sarsa"><code class="xref py py-meth docutils literal"><span class="pre">build_trainer_sarsa()</span></code></a> compiles a <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core"><code class="xref py py-attr docutils literal"><span class="pre">train_core</span></code></a> theano function which implements              <strong>SARSA</strong>, and algorithm-specific <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn"><code class="xref py py-attr docutils literal"><span class="pre">learn</span></code></a> function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_n_sarsa">
+<code class="descname">build_trainer_n_sarsa</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#ValueRLInterface.build_trainer_n_sarsa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_n_sarsa" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_n_sarsa" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_n_sarsa"><code class="xref py py-meth docutils literal"><span class="pre">build_trainer_n_sarsa()</span></code></a> compiles a <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core"><code class="xref py py-attr docutils literal"><span class="pre">train_core</span></code></a> theano function which implements            <strong>n-step SARSA</strong>, and algorithm-specific <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn"><code class="xref py py-attr docutils literal"><span class="pre">learn</span></code></a> function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_expectedsarsa">
+<code class="descname">build_trainer_expectedsarsa</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#ValueRLInterface.build_trainer_expectedsarsa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_expectedsarsa" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_expectedsarsa" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_expectedsarsa"><code class="xref py py-meth docutils literal"><span class="pre">build_trainer_expectedsarsa()</span></code></a> compiles a <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core"><code class="xref py py-attr docutils literal"><span class="pre">train_core</span></code></a> theano function which implements              <strong>Expected-SARSA</strong>, and algorithm-specific <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn"><code class="xref py py-attr docutils literal"><span class="pre">learn</span></code></a> function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_doubledqn">
+<code class="descname">build_trainer_doubledqn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#ValueRLInterface.build_trainer_doubledqn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_doubledqn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_doubleqlearning">
+<code class="descname">build_trainer_doubleqlearning</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#ValueRLInterface.build_trainer_doubleqlearning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_doubleqlearning" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_doubleqlearning" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_doubleqlearning"><code class="xref py py-meth docutils literal"><span class="pre">build_trainer_doubleqlearning()</span></code></a> compiles a <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train_core"><code class="xref py py-attr docutils literal"><span class="pre">train_core</span></code></a> theano function which implements            <strong>Double Q-Learning</strong>, and algorithm-specific <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn"><code class="xref py py-attr docutils literal"><span class="pre">learn</span></code></a> function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.start">
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#ValueRLInterface.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.start" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.start" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.start"><code class="xref py py-meth docutils literal"><span class="pre">start()</span></code></a> runs one episode and produces one trajectory.</p>
+<p>After each episode is done, it calls <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.learn"><code class="xref py py-attr docutils literal"><span class="pre">learn</span></code></a> function to learn.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns (G, H):</th><td class="field-body">(Return, Horizon, cost) cost is a cost estimate for value approximation.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">(float, int, cost)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train">
+<code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/RLInterface.html#ValueRLInterface.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train"><code class="xref py py-meth docutils literal"><span class="pre">train()</span></code></a> is a top-level train function.            Repeatedly calls <a class="reference internal" href="#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.start" title="Tetris.mods.Interfaces.RLInterface.ValueRLInterface.start"><code class="xref py py-meth docutils literal"><span class="pre">start()</span></code></a> to produce trajectories and learn.</p>
+<p>Every 100 episode, it saves history and model weights.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -424,11 +667,6 @@ explanation about all the settings.</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="Tetris.mods.Interfaces.VisualInterface.VisualInterface.line_removed">
-<code class="descname">line_removed</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/VisualInterface.html#VisualInterface.line_removed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.VisualInterface.VisualInterface.line_removed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="Tetris.mods.Interfaces.VisualInterface.VisualInterface.perform_action">
 <code class="descname">perform_action</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Interfaces/VisualInterface.html#VisualInterface.perform_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Interfaces.VisualInterface.VisualInterface.perform_action" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -485,14 +723,11 @@ explanation about all the settings.</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -514,14 +749,14 @@ explanation about all the settings.</p>
         <li class="right" >
           <a href="Tetris.mods.html" title="Tetris.mods package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Tetris  documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="Tetris.html" >Tetris package</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="Tetris.mods.html" >Tetris.mods package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Tetris  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="Tetris.html" >Tetris package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="Tetris.mods.html" >Tetris.mods package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2016, Author.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2016, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
     </div>
   </body>
 </html>

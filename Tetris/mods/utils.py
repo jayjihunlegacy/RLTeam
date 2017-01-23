@@ -22,13 +22,25 @@ class StateActionNode:#(s,a) pair..
 		self.visits +=1
 
 	def get_Qs(self):
-		Qs = [child.reward/child.visits if child else -float('inf') for child in self.childs]
+		Qs = []
+		for child in self.childs:
+			if child:
+				Qs.append(child.reward/child.visits if child.visits!=0 else 0)
+			else:
+				Qs.append(-float('inf'))
 		return Qs
 
 	def backprop(self, reward):
 		self.update(reward)
 		if self.parent:
 			self.parent.backprop(reward)
+	
+	def clear(self):
+		self.reward = 0.
+		self.visits = 0
+		for child in self.childs:
+			if child:
+				child.clear()
 
 class Node:
 	def __init__(self, N, rot=0, parent=None):

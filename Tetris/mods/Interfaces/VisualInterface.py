@@ -1,4 +1,5 @@
-﻿import wx
+﻿
+import wx
 import _pickle
 import numpy as np
 import time
@@ -11,7 +12,7 @@ from ..Authen import Env
 
 class TetrisFrame(wx.Frame):
 	def __init__(self):
-		wx.Frame.__init__(self, None, title='Tetris', size=(360, 760))
+		wx.Frame.__init__(self, None, title='Tetris', size=(36*Board.width, 30*Board.height + 100))
 		self.statusbar = self.CreateStatusBar()
 		self.statusbar.SetStatusText('0')
 
@@ -71,6 +72,7 @@ class TetrisPanel(wx.Panel):
 			for x, y in zip(Xs, Ys):
 				self.drawSquare(dc, x * squareWidth, (board_height - y - 1) * squareHeight, Tetrominoes.Aim)
 		'''
+		self.interface.set_statusbar('%.3f'%(self.interface.G))
 
 	def drawSquare(self,dc,x,y,shape):
 		colors = ['#000000', '#CC6666', '#66CC66', '#6666CC',
@@ -147,7 +149,7 @@ class Visual:
 			self.refresh = True
 		else:
 			self.panel.Refresh()
-		
+			
 	def set_statusbar(self, string):
 		self.frame.statusbar.SetStatusText(string)
 
@@ -159,7 +161,7 @@ class Visual:
 			self.load_savefile()
 
 		self.isStarted=True
-		self.timer.Start(1)
+		self.timer.Start(10)
 
 class VisualInterface(Visual, BoardInterface):
 	keycode2action={
@@ -174,7 +176,7 @@ class VisualInterface(Visual, BoardInterface):
 		BoardInterface.__init__(self, **kwargs)
 
 		self.panel.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
-		self.panel.Bind(wx.EVT_TIMER, self.OnTimer, id=self.ID_TIMER)
+		self.panel.Bind(wx.EVT_TIMER, self.tick, id=self.ID_TIMER)
 			
 	def OnKeyDown(self, event):
 		if not self.isStarted and not self.isOver:
@@ -200,15 +202,12 @@ class VisualInterface(Visual, BoardInterface):
 					
 	def gameover(self):
 		self.timer.Stop()
-		self.set_statusbar('Game Over')
+		self.set_statusbar('Game Over! ' + '%.3f'%(self.G))
 		BoardInterface.gameover(self)
 
-	def line_removed(self, num):
-		self.numLinesRemoved+=num
-		self.set_statusbar(str(self.numLinesRemoved))
-
 	def perform_action(self, action):
-		self.actionhistory.append((self.board.t, action))
+		if action != Action.STEP:
+			self.actionhistory.append((self.board.t, action))
 		r, _ = self.board.T(action)
 		self.G += r
 		if action != Action.STEP:
@@ -219,7 +218,13 @@ class VisualInterface(Visual, BoardInterface):
 		if self.settings['input_type'] == InputType.MACHINE:
 			pi = self.machine.Pi(self.board.S())
 			if pi is not None:
-				self.perform_action(np.random.choice(5, p=pi))
+				try:
+					self.perform_action(np.random.choice(5, p=pi))
+				except ValueError:
+					print('Probabilities do not sum to 1. P =',str(pi))
+					raise Exception
+			else:
+				self.perform_action(Action.STEP)
 
 		elif self.settings['input_type'] == InputType.SAVE:
 			while len(self.actionhistory) > 0:
@@ -232,10 +237,10 @@ class VisualInterface(Visual, BoardInterface):
 				elif self.board.t > tick:
 					print('Problem')
 				else:
-					break
+					self.perform_action(Action.STEP)
 
 		elif self.settings['input_type'] == InputType.HUMAN:
-			pass
+			self.perform_action(Action.STEP)
 
 	def newshape(self):
 		if self.settings['input_type'] == InputType.SAVE:

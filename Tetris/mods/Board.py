@@ -76,7 +76,7 @@ class Reward:
 	+------------------------+------+
 	|:data:`LINECLEAR`       |1     |
 	+------------------------+------+
-	|:data:`STEP`            |0     |
+	|:data:`STEP`            |-0.01 |
 	+------------------------+------+
 	|:data:`GAMEOVER`        |0     |
 	+------------------------+------+
@@ -95,7 +95,7 @@ class Reward:
 	"""
 	:data:`LINECLEAR` is a reward given each time a line is cleared.
 	"""
-	STEP = 0
+	STEP = -0.01
 	"""
 	:data:`STEP` is a reward given each time a timestep advances.
 	It is naturally set to zero.
@@ -151,60 +151,30 @@ class Tetrominoes:
 
 	#Added type (Not Shape, for drawing or special block)
 	Aim = 8
-
-class MDP:
-	"""
-	:class:`MDP` is an abstract base class of MDP.
-
-	:meth:`T`, :meth:`S0`, :meth:`TICK` should be implemented.
-	"""
-	__metaclass__ = ABCMeta
-	@abstractmethod
-	def T(self, action):
-		'''
-		:meth:`T` makes a transition with given action.
-
-		:param int action: Index of action to be performed.
-
-		:return (reward, success): *reward* is a reward attained by transition. *success* is true if given action was valid action.	
-		:rtype: (int, bool)
-		'''
-		raise NotImplementedError()
-
-	@abstractmethod
-	def S0(self):
-		'''
-		:meth:`S0` sets an MDP to a start state.
-		'''		
-		raise NotImplementedError()
-
-	@abstractmethod
-	def TICK(self):
-		"""
-		:meth:`TICK` increases timestep by 1.
-		"""
-		raise NotImplementedError()
-		
-class Board(MDP):
+			
+class Board:
 	"""
 	:class:`Board` is a class representing Tetris in MDP form.
 	"""
 
-	width = 10
+	width = 4
 	"""
 	Width of Tetris board
 	"""
 
-	height = 22
+	height = 20
 	"""
 	Height of Tetris board
 	"""
-	def __init__(self, interface):
-		self.TICKS_FOR_LINEDOWN=10
+	def __init__(self, interface, maxTick=-1):
+		self.TICKS_FOR_LINEDOWN=100
 		self.N = 5
 
 		self.interface = interface
-		self.maxTick = -1
+		self.maxTick = maxTick
+
+		self.table = np.zeros((self.height, self.width), dtype='int32')
+		self.piececoords = np.zeros((4,2), dtype='int32')
 		
 	def T(self, action):
 		'''
@@ -215,52 +185,46 @@ class Board(MDP):
 		:return (reward, success): *reward* is a reward attained by transition. *success* is true if given action was valid action.	
 		:rtype: (int, bool)
 		'''
+		self.t += 1
+		if self.t == self.maxTick:
+			return self._gameover(), False
+
 		if action == Action.LEFT:
 			if self.tryMove(self.pieces[0], self.piececoords, self.curX-1, self.curY):
-				return Reward.MOVEMENT, True
+				return Reward.STEP + Reward.MOVEMENT, True
 			else:
-				return Reward.INVALID_MOVEMENT, False
+				return Reward.STEP + Reward.INVALID_MOVEMENT, False
 
 		elif action == Action.RIGHT:
 			if self.tryMove(self.pieces[0], self.piececoords, self.curX+1, self.curY):
-				return Reward.MOVEMENT, True
+				return Reward.STEP + Reward.MOVEMENT, True
 			else:
-				return Reward.INVALID_MOVEMENT, False
+				return Reward.STEP + Reward.INVALID_MOVEMENT, False
 
 		elif action == Action.UP:
 			if self.tryMove(self.pieces[0], self._rotatedRight(self.piececoords),  self.curX, self.curY):
-				return Reward.MOVEMENT, True
+				return Reward.STEP + Reward.MOVEMENT, True
 			else:
-				return Reward.INVALID_MOVEMENT, False
+				return Reward.STEP + Reward.INVALID_MOVEMENT, False
 			
 		elif action == Action.DOWN:
-			return self._oneLineDown()
+			r, isValid = self._oneLineDown()
+			return Reward.STEP + r, isValid
 			
 		elif action == Action.SPACE:
 			success = True
 			while success:
 				score, success = self._oneLineDown()
-			return score, True
+			return Reward.STEP + score, True
 
 		elif action == Action.STEP:
-			return self.TICK()
+			if self.t % self.TICKS_FOR_LINEDOWN == 0:
+				return self.T(Action.DOWN)
+			return Reward.STEP, True
 
 		else:
 			print("Invalid action :",action)
-
-	def TICK(self):
-		"""
-		:meth:`TICK` increases timestep by 1.
-
-		:return (reward, success): *reward* is a reward attained by transition. *success* is true if given action was valid action.	
-		:rtype: (int, bool)
-		"""
-		self.t += 1
-		if self.t == self.maxTick:
-			return self._gameover(), False
-		if self.t % self.TICKS_FOR_LINEDOWN == 0:
-			return self.T(Action.DOWN)
-		return Reward.STEP, True
+				
 
 	def S0(self):
 		'''
@@ -268,7 +232,8 @@ class Board(MDP):
 
 		#TODO explain more in detail.
 		'''		
-		self.table = np.zeros((Board.height, Board.width), dtype='int32')
+		
+		self.table[:]=0
 		#self.table[0,:] = 1
 		#self.table[0,0] = 0
 		self.curX = 0
@@ -278,7 +243,8 @@ class Board(MDP):
 		self.isOver = False
 		
 		self.pieces = [0] * 6 # pieces[0] : current, [1] : next, [2] : next2, ...
-		self.piececoords = np.zeros((4,2), dtype='int32')
+		
+		self.piececoords[:]=0 
 		for i in range(self.N + 1):
 			self.nextpiece()
 
@@ -309,9 +275,9 @@ class Board(MDP):
 			numsToRemove = len(rowsToRemove)
 
 			if numsToRemove != 0:
-				ind = np.delete(np.arange(Board.height), rowsToRemove)
+				ind = np.delete(np.arange(self.height), rowsToRemove)
 				self.table = np.pad(self.table[ind], ((0,numsToRemove), (0,0)), mode='constant')
-				self.interface.line_removed(numsToRemove)
+				self.interface.Refresh()
 
 			gameoverscore = self.nextpiece()
 			if gameoverscore:
@@ -334,9 +300,9 @@ class Board(MDP):
 		Xs = newX + coords[:, 0]
 		Ys = newY - coords[:, 1]
 		
-		if not (np.all(0<=Xs) and np.all(Xs < Board.width)):
+		if not (np.all(0<=Xs) and np.all(Xs < self.width)):
 			return False
-		if not (np.all(0<=Ys) and np.all(Ys < Board.height)):
+		if not (np.all(0<=Ys) and np.all(Ys < self.height)):
 			return False
 		if np.any(self.table[Ys,Xs] != Tetrominoes.NoShape):
 			return False
@@ -383,8 +349,8 @@ class Board(MDP):
 		if not self.pieces[0]:
 			return 0
 		self.piececoords = Tetrominoes.coordsTable[self.pieces[0]].copy()
-		self.curX = Board.width // 2 + 1
-		self.curY = Board.height - 1 + self.piececoords[:, 1].min()
+		self.curX = self.width // 2
+		self.curY = self.height - 1 + self.piececoords[:, 1].min()
 		
 
 		a = self.tryMove(self.pieces[0], self.piececoords, self.curX, self.curY)
@@ -402,7 +368,7 @@ class Board(MDP):
 		:return phi: binary (2, 22, 10) state tensor
 		:rtype: numpy.ndarray
 		"""
-		x_piece = np.zeros((Board.height, Board.width), dtype='int32')
+		x_piece = np.zeros((self.height, self.width), dtype='int32')
 		Xs = self.curX + self.piececoords[:, 0]
 		Ys = self.curY - self.piececoords[:, 1]
 		x_piece[Ys,Xs]=1		
@@ -431,7 +397,7 @@ class Board(MDP):
 
 	def setS(self, other):
 		"""
-		:meth:`setS` sets MDP's state to given *other*.
+		:meth:`setS` sets MDP's state to given *other*. Set states **by value**, not **by reference**.
 
 		The format of *other* should be the same as that returned by :meth:`S`.
 

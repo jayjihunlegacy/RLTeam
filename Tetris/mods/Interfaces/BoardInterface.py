@@ -39,9 +39,15 @@ class BoardInterface:
 	:param machine: machine to play when *input_type* is 'machine'
 	:type machine: :class:`Tetris.mods.Machines.Machine.Machine`
 	"""
-	def __init__(self, input_type='machine', machine=None, **kwargs):		
-		self.board = Board(self)
+	def __init__(self, input_type='machine', machine=None, maxtick=-1, **kwargs):		
+		np.random.seed(int(time.time() + os.getpid()))
+		
+		self.board = Board(self, maxtick)
 		""":class:`Tetris.mods.Board.Board` instance which to interact with."""
+		self.width = self.board.width
+		"""Width of :attr:`board`."""
+		self.height = self.board.height
+		"""Height of :attr:`board`."""
 		self.machine = machine
 		""":class:`Tetris.mods.Machines.Machine` instance which may play Tetris.
 		None if no machine is provided."""
@@ -49,8 +55,6 @@ class BoardInterface:
 		"""True if started. False if stopped."""
 		self.isOver = False
 		"""True is over. False otherwise."""
-		self.numLinesRemoved = 0
-		"""Total number of lines removed since beginning. Starts from 0."""
 		self.actionhistory = []
 		"""List of actions taken. (tick, action) pairs are stored."""
 		self.piecehistory = []
@@ -64,12 +68,13 @@ class BoardInterface:
 
 		1. save_hist
 		2. save_traj
-		3. collect_traj
-		4. collect_hist
-		5. verbose_gameover
-		6. input_type
-		7. filename
-		8. name
+		3. refresh_traj
+		4. collect_traj
+		5. collect_hist
+		6. verbose_gameover
+		7. input_type
+		8. filename
+		9. name
 
 		#TODO
 		explanation about all the settings.
@@ -78,12 +83,14 @@ class BoardInterface:
 		#settings
 		self.settings['save_hist'] = False
 		self.settings['save_traj'] = False
+		self.settings['maximum_traj'] = 1000000
+		self.settings['refresh_traj'] = True
 		self.settings['collect_traj'] = False
 		self.settings['collect_hist'] = False
 		self.settings['verbose_gameover'] = False
 		self.settings['input_type'] = InputType.type2code[input_type]
 		self.settings['filename'] = 'Nopath'		
-		self.settings['name'] = 'Noname'
+		self.settings['name'] = 'BoardInterface'
 
 		for key in kwargs:
 			self.settings[key] = kwargs[key]
@@ -95,17 +102,56 @@ class BoardInterface:
 		:meth:`initialize` initializes interface.
 
 		1. clear :attr:`actionhistory`, :attr:`piecehistory`, :attr:`trajectory`.
-		2. reset :attr:`numLinesRemoved`, :attr:`G`.
+		2. reset :attr:`G`.
 		3. set :attr:`board` to start state(S0) by calling :meth:`Tetris.mods.Board.Board.S0`.
 		"""
 		self.isStarted = False
 		self.isOver = False
-		self.numLinesRemoved = 0
 		self.actionhistory = []
 		self.piecehistory = []
-		self.trajectory = []
+
+		if self.settings['refresh_traj']:
+			self.trajectory = []
+
 		self.G = 0
 		self.board.S0()
+		
+	def S(self):
+		"""
+		:meth:`S` returns a current state of :attr:`board` in a tuple form.
+
+		Tuple contains:
+
+		1. Copied matrix of :attr:`table`
+		2. Copied list of :attr:`pieces`
+		3. Copied matrix of :attr:`piececoords`
+		4. :attr:`curX`
+		5. :attr:`curY`
+		6. :attr:`t`
+		7. :attr:`isOver`
+
+		:returns state: current state in a tuple form
+		:rtype: tuple
+		"""
+		return self.board.S()
+
+	def S0(self):
+		'''
+		:meth:`S0` sets :attr:`board` to a start state.
+
+		#TODO explain more in detail.
+		'''
+		return self.board.S0()
+
+	def setS(self, other):
+		"""
+		:meth:`setS` sets :attr:`board`'s state to given *other*. Set states **by value**, not **by reference**.
+
+		The format of *other* should be the same as that returned by :meth:`S`.
+
+		:param tuple other: state to be set		
+		"""
+		return self.board.setS(other)
 		
 	###########################################################################
 
@@ -136,7 +182,7 @@ class BoardInterface:
 		now = datetime.datetime.now()
 		time_string = str(now).replace(' ','_').replace('.',':').replace(':','-')
 		filename = InputType.tostr[self.settings['input_type']] + \
-			'_'+str(self.numLinesRemoved)+'_'+time_string+'.sav'
+			'_'+str(int(self.G))+'_'+time_string+'.sav'
 		
 		# 4. Save playfile.
 		full=env.savefolder+filename
@@ -176,24 +222,13 @@ class BoardInterface:
 				_pickle.dump(d, f)
 
 	###########################################################################
-	
-	def OnTimer(self, event):
+
+	def tick(self, event):
 		"""
-		:meth:`OnTimer` is called by :attr:`timer`, and it ticks the MDP by calling :meth:`tick`.
-		"""
-		self.tick()
-	
-	def tick(self):
-		"""
-		:meth:`tick` increases a timestep of MDP.
+		:meth:`tick` call :meth:`OnTick`.
 
 		If the game is over, call :meth:`gameover`.
-
-		Otherwise, call :meth:`OnTick`.
 		"""
-		r, _ = self.board.T(Action.STEP)
-		self.G += r
-
 		if self.board.isOver:
 			self.gameover()
 		else:
@@ -205,7 +240,11 @@ class BoardInterface:
 		"""
 		pi = self.machine.Pi(self.board.S())
 		if pi is not None:
-			self.perform_action(np.random.choice(5, p=pi))
+			try:
+				self.perform_action(np.random.choice(5, p=pi))
+			except ValueError:
+				print('Probabilities do not sum to 1. P =',str(pi))
+				raise Exception
 
 	def newshape(self):
 		"""
@@ -252,22 +291,31 @@ class BoardInterface:
 
 		:param action: action to perform
 		:type action: int
+
+		:returns result: (reward, isvalid)
+		:rtype: tuple
 		"""
-		if self.settings['collect_hist']:
+		if self.settings['collect_hist'] and action!=Action.STEP:
 			self.actionhistory.append((self.board.t, action))
 
-		if self.settings['collect_traj']:
+		if self.settings['collect_traj'] and action!=Action.STEP:
 			s = self.board.phi()
 			a = action
-			r, _ = self.board.T(action)
+			r, isValid = self.board.T(action)
 			self.G += r
 			sprime = self.board.phi()	
 			e = (s,a,r,sprime)
 			self.trajectory.append(e)
 
+			if len(self.trajectory) >= self.settings['maximum_traj']:
+				self.trajectory = self.trajectory[-self.settings['maximum_traj'] :]
+
+			return r, isValid
+
 		else:
-			r, _ = self.board.T(action)
+			r, isValid = self.board.T(action)
 			self.G += r
+			return r, isValid
 			
 	def start(self):
 		"""
@@ -278,26 +326,18 @@ class BoardInterface:
 		self.isStarted=True
 		startTime = time.time()
 		while True:
-			self.OnTimer(None)
+			self.tick(None)
 			
 			if self.isOver:
 				break
 
 		endTime=time.time()
 		if self.settings['verbose_gameover']:
-			print('Game over. Score : %i, Ticks : %i, Time elapsed : %.1fs'%(self.numLinesRemoved, self.board.t, endTime-startTime))
-		return self.numLinesRemoved
+			print('Game over. G : %.3f, Ticks : %i, Time elapsed : %.1fs'%(self.G, self.board.t, endTime-startTime))
+		return self.G
 
 	###########################################################################
-
-	def line_removed(self, num):
-		"""
-		:meth:`line_removed` adds :attr:`numLinedRemoved` given *num*.
-
-		:param int num: number of lines newly removed
-		"""
-		self.numLinesRemoved+=num
-
+	
 	def Refresh(self):
 		"""
 		:meth:`Refresh` does nothing.
@@ -311,17 +351,27 @@ class DummyInterface(BoardInterface):
 
 	This class is usually as an interface of dummy board which is used for simulation in MC machines.
 	"""
-	def __init__(self):
-		super().__init__()
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+
+	def perform_action(self, action):
+		"""
+		:meth:`perform_action` performs *action* by calling :meth:`Tetris.mods.Board.Board.T`.
+
+		Accumulate resulting reward to :attr:`G`. \
+		For performance, no additional option is provided in this method.
+
+		:param action: action to perform
+		:type action: int
+
+		:returns result: (reward, isvalid)
+		:rtype: tuple
+		"""
+		return self.board.T(action)
 
 	def gameover(self):
 		"""
 		:meth:`gameover` does nothing.
 		"""
-		pass
-		
-	def line_removed(self, num):
-		"""
-		:meth:`line_removed` does nothing.
-		"""
-		pass
+		self.isStarted=False
+		self.isOver = True

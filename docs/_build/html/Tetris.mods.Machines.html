@@ -2,11 +2,11 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tetris.mods.Machines package &mdash; Tetris  documentation</title>
+    <title>Tetris.mods.Machines package &#8212; Tetris  documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -40,9 +40,9 @@
         <li class="right" >
           <a href="Tetris.mods.Interfaces.html" title="Tetris.mods.Interfaces package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Tetris  documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="Tetris.html" >Tetris package</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="Tetris.mods.html" accesskey="U">Tetris.mods package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Tetris  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="Tetris.html" >Tetris package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="Tetris.mods.html" accesskey="U">Tetris.mods package</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -60,28 +60,94 @@
 <span id="tetris-mods-machines-mcmachine-module"></span><h2>Tetris.mods.Machines.MCMachine module<a class="headerlink" href="#module-Tetris.mods.Machines.MCMachine" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="Tetris.mods.Machines.MCMachine.MicroMCMachine">
-<em class="property">class </em><code class="descclassname">Tetris.mods.Machines.MCMachine.</code><code class="descname">MicroMCMachine</code><span class="sig-paren">(</span><em>maxtime=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#MicroMCMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.MicroMCMachine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">Tetris.mods.Machines.MCMachine.</code><code class="descname">MicroMCMachine</code><span class="sig-paren">(</span><em>maxtime=0.1</em>, <em>proc_num=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#MicroMCMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.MicroMCMachine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine" title="Tetris.mods.Machines.Machine.Machine"><code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Machines.Machine.Machine</span></code></a></p>
+<p><a class="reference internal" href="#Tetris.mods.Machines.MCMachine.MicroMCMachine" title="Tetris.mods.Machines.MCMachine.MicroMCMachine"><code class="xref py py-class docutils literal"><span class="pre">MicroMCMachine</span></code></a> is an Monte Carlo machine that samples Q from micro actions.</p>
+<p>This machine has a Markov Property. i.e. can be deployed to random state with no history.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>maxtime</strong> (<em>float</em>) &#8211; maximum computation time</li>
+<li><strong>proc_num</strong> (<em>int</em>) &#8211; number of processes to use when MC algorithm runs</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.MCMachine.MicroMCMachine.maxtime">
+<code class="descname">maxtime</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.MicroMCMachine.maxtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum computation time</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.MCMachine.MicroMCMachine.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>N=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.MicroMCMachine.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-meth docutils literal"><span class="pre">sequential_evaluate()</span></code> evaluates expected return of start state given policy.              This method does not use multiprocessing.</p>
+<p>Simulate a game with <em>N</em> many games and return mean and variance of returns.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>N</strong> (<em>int</em>) &#8211; number of roll-outs</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns result:</th><td class="field-body">(mean(return), var(return))</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="Tetris.mods.Machines.MCMachine.MicroMCMachine.initialize">
 <code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#MicroMCMachine.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.MicroMCMachine.initialize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.MCMachine.MicroMCMachine.initialize" title="Tetris.mods.Machines.MCMachine.MicroMCMachine.initialize"><code class="xref py py-meth docutils literal"><span class="pre">initialize()</span></code></a> spawns <code class="xref py py-attr docutils literal"><span class="pre">proc_num</span></code> many workers and starts them.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="Tetris.mods.Machines.MCMachine.MicroMCMachine.default_Pi">
 <code class="descname">default_Pi</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#MicroMCMachine.default_Pi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.MicroMCMachine.default_Pi" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.MCMachine.MicroMCMachine.default_Pi" title="Tetris.mods.Machines.MCMachine.MicroMCMachine.default_Pi"><code class="xref py py-meth docutils literal"><span class="pre">default_Pi()</span></code></a> is a policy used during MC simulation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> (<em>tuple</em>) &#8211; board state in a tuple form.                See <a class="reference internal" href="Tetris.mods.html#Tetris.mods.Board.Board.S" title="Tetris.mods.Board.Board.S"><code class="xref py py-meth docutils literal"><span class="pre">Tetris.mods.Board.Board.S()</span></code></a> for details.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns pi:</th><td class="field-body">probability distribution of actions. must sum to 1.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="Tetris.mods.Machines.MCMachine.MicroMCMachine.Pi">
 <code class="descname">Pi</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#MicroMCMachine.Pi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.MicroMCMachine.Pi" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.MCMachine.MicroMCMachine.Pi" title="Tetris.mods.Machines.MCMachine.MicroMCMachine.Pi"><code class="xref py py-meth docutils literal"><span class="pre">Pi()</span></code></a> returns a probability distribution of actions given <em>state</em>.                 This method does not run any time-consuming code. Instead, it directs workers to run            simulations, gathers data, and returns maximal action.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> (<em>tuple</em>) &#8211; board state in a tuple form.                See <a class="reference internal" href="Tetris.mods.html#Tetris.mods.Board.Board.S" title="Tetris.mods.Board.Board.S"><code class="xref py py-meth docutils literal"><span class="pre">Tetris.mods.Board.Board.S()</span></code></a> for details.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns pi:</th><td class="field-body">probability distribution of actions. must sum to 1.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="Tetris.mods.Machines.MCMachine.MacroMCMachine">
-<em class="property">class </em><code class="descclassname">Tetris.mods.Machines.MCMachine.</code><code class="descname">MacroMCMachine</code><span class="sig-paren">(</span><em>maxtime=5</em>, <em>cool_time=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#MacroMCMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.MacroMCMachine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">Tetris.mods.Machines.MCMachine.</code><code class="descname">MacroMCMachine</code><span class="sig-paren">(</span><em>maxtime=1</em>, <em>cool_time=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#MacroMCMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.MacroMCMachine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine" title="Tetris.mods.Machines.Machine.Machine"><code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Machines.Machine.Machine</span></code></a></p>
 <dl class="method">
 <dt id="Tetris.mods.Machines.MCMachine.MacroMCMachine.initialize">
@@ -91,6 +157,115 @@
 <dl class="method">
 <dt id="Tetris.mods.Machines.MCMachine.MacroMCMachine.Pi">
 <code class="descname">Pi</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#MacroMCMachine.Pi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.MacroMCMachine.Pi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine">
+<em class="property">class </em><code class="descclassname">Tetris.mods.Machines.MCMachine.</code><code class="descname">SteppedMicroMCMachine</code><span class="sig-paren">(</span><em>maxstep=20</em>, <em>maxtime=0.2</em>, <em>proc_num=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#SteppedMicroMCMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine" title="Tetris.mods.Machines.Machine.Machine"><code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Machines.Machine.Machine</span></code></a></p>
+<p><a class="reference internal" href="#Tetris.mods.Machines.MCMachine.MicroMCMachine" title="Tetris.mods.Machines.MCMachine.MicroMCMachine"><code class="xref py py-class docutils literal"><span class="pre">MicroMCMachine</span></code></a> is an Monte Carlo machine that samples Q from micro actions.</p>
+<p>This machine has a Markov Property. i.e. can be deployed to random state with no history.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>maxtime</strong> (<em>float</em>) &#8211; maximum computation time</li>
+<li><strong>proc_num</strong> (<em>int</em>) &#8211; number of processes to use when MC algorithm runs</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.maxtime">
+<code class="descname">maxtime</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.maxtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum computation time</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.maxstep">
+<code class="descname">maxstep</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.maxstep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum step to look ahead</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>N=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-meth docutils literal"><span class="pre">sequential_evaluate()</span></code> evaluates expected return of start state given policy.              This method does not use multiprocessing.</p>
+<p>Simulate a game with <em>N</em> many games and return mean and variance of returns.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>N</strong> (<em>int</em>) &#8211; number of roll-outs</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns result:</th><td class="field-body">(mean(return), var(return))</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#SteppedMicroMCMachine.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.initialize" title="Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.initialize"><code class="xref py py-meth docutils literal"><span class="pre">initialize()</span></code></a> spawns <code class="xref py py-attr docutils literal"><span class="pre">proc_num</span></code> many workers and starts them.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.default_Pi">
+<code class="descname">default_Pi</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#SteppedMicroMCMachine.default_Pi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.default_Pi" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.default_Pi" title="Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.default_Pi"><code class="xref py py-meth docutils literal"><span class="pre">default_Pi()</span></code></a> is a policy used during MC simulation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> (<em>tuple</em>) &#8211; board state in a tuple form.                See <a class="reference internal" href="Tetris.mods.html#Tetris.mods.Board.Board.S" title="Tetris.mods.Board.Board.S"><code class="xref py py-meth docutils literal"><span class="pre">Tetris.mods.Board.Board.S()</span></code></a> for details.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns pi:</th><td class="field-body">probability distribution of actions. must sum to 1.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.Pi">
+<code class="descname">Pi</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#SteppedMicroMCMachine.Pi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.Pi" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.Pi" title="Tetris.mods.Machines.MCMachine.SteppedMicroMCMachine.Pi"><code class="xref py py-meth docutils literal"><span class="pre">Pi()</span></code></a> returns a probability distribution of actions given <em>state</em>.                 This method does not run any time-consuming code. Instead, it directs workers to run            simulations, gathers data, and returns maximal action.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> (<em>tuple</em>) &#8211; board state in a tuple form.                See <a class="reference internal" href="Tetris.mods.html#Tetris.mods.Board.Board.S" title="Tetris.mods.Board.Board.S"><code class="xref py py-meth docutils literal"><span class="pre">Tetris.mods.Board.Board.S()</span></code></a> for details.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns pi:</th><td class="field-body">probability distribution of actions. must sum to 1.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Tetris.mods.Machines.MCMachine.SteppedMacroMCMachine">
+<em class="property">class </em><code class="descclassname">Tetris.mods.Machines.MCMachine.</code><code class="descname">SteppedMacroMCMachine</code><span class="sig-paren">(</span><em>maxtime=1</em>, <em>cool_time=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#SteppedMacroMCMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.SteppedMacroMCMachine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine" title="Tetris.mods.Machines.Machine.Machine"><code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Machines.Machine.Machine</span></code></a></p>
+<dl class="method">
+<dt id="Tetris.mods.Machines.MCMachine.SteppedMacroMCMachine.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#SteppedMacroMCMachine.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.SteppedMacroMCMachine.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.MCMachine.SteppedMacroMCMachine.Pi">
+<code class="descname">Pi</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/MCMachine.html#SteppedMacroMCMachine.Pi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.MCMachine.SteppedMacroMCMachine.Pi" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -114,14 +289,9 @@
 </div>
 <div class="section" id="module-Tetris.mods.Machines.Machine">
 <span id="tetris-mods-machines-machine-module"></span><h2>Tetris.mods.Machines.Machine module<a class="headerlink" href="#module-Tetris.mods.Machines.Machine" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="Tetris.mods.Machines.Machine.one">
-<code class="descclassname">Tetris.mods.Machines.Machine.</code><code class="descname">one</code><span class="sig-paren">(</span><em>tup</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/Machine.html#one"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.Machine.one" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="class">
 <dt id="Tetris.mods.Machines.Machine.Machine">
-<em class="property">class </em><code class="descclassname">Tetris.mods.Machines.Machine.</code><code class="descname">Machine</code><a class="reference internal" href="_modules/Tetris/mods/Machines/Machine.html#Machine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">Tetris.mods.Machines.Machine.</code><code class="descname">Machine</code><span class="sig-paren">(</span><em>proc_num=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/Machine.html#Machine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p><a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine" title="Tetris.mods.Machines.Machine.Machine"><code class="xref py py-class docutils literal"><span class="pre">Machine</span></code></a> is an abstract base class for Tetris agents.</p>
 <p><a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine.Pi" title="Tetris.mods.Machines.Machine.Machine.Pi"><code class="xref py py-meth docutils literal"><span class="pre">Pi()</span></code></a> must be implemented.</p>
@@ -135,35 +305,46 @@
 <code class="descname">maxf</code><em class="property"> = inf</em><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.maxf" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="Tetris.mods.Machines.Machine.Machine.Pi">
-<code class="descname">Pi</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/Machine.html#Machine.Pi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.Pi" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine.Pi" title="Tetris.mods.Machines.Machine.Machine.Pi"><code class="xref py py-meth docutils literal"><span class="pre">Pi()</span></code></a> returns a probability distribution of actions given <em>state</em>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> (<em>tuple</em>) &#8211; board state in a tuple form.</td>
-</tr>
-</tbody>
-</table>
-<p>See <a class="reference internal" href="Tetris.mods.html#Tetris.mods.Board.Board.S" title="Tetris.mods.Board.Board.S"><code class="xref py py-meth docutils literal"><span class="pre">Tetris.mods.Board.Board.S()</span></code></a> for details.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns pi:</th><td class="field-body">probability distribution of actions. must sum to 1.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
-</tr>
-</tbody>
-</table>
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.Machine.Machine.proc_num">
+<code class="descname">proc_num</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.proc_num" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of processes to use when MC algorithm runs</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.Machine.Machine.workers">
+<code class="descname">workers</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.workers" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of <code class="xref py py-class docutils literal"><span class="pre">multiprocessing.Process</span></code> instances which are workers</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.Machine.Machine.Queues">
+<code class="descname">Queues</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.Queues" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of <code class="xref py py-class docutils literal"><span class="pre">queue.Queue</span></code> to order workers</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.Machine.Machine.resQ">
+<code class="descname">resQ</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.resQ" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <code class="xref py py-class docutils literal"><span class="pre">queue.Queue</span></code> instance to get results. All workers put results to here.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="Tetris.mods.Machines.Machine.Machine.evaluate">
-<code class="descname">evaluate</code><span class="sig-paren">(</span><em>N=10000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/Machine.html#Machine.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.evaluate" title="Permalink to this definition">¶</a></dt>
-<dd><p><code class="xref py py-meth docutils literal"><span class="pre">Evaluate()</span></code> evaluates expected return of start state given policy.</p>
+<dt id="Tetris.mods.Machines.Machine.Machine.spawn_workers">
+<code class="descname">spawn_workers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/Machine.html#Machine.spawn_workers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.spawn_workers" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine.spawn_workers" title="Tetris.mods.Machines.Machine.Machine.spawn_workers"><code class="xref py py-meth docutils literal"><span class="pre">spawn_workers()</span></code></a> spawns workers if no worker exists, and do nothing if workers exist.</p>
+<p>Use this method in advance any MC algorithm runs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.Machine.Machine.kill_workers">
+<code class="descname">kill_workers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/Machine.html#Machine.kill_workers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.kill_workers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.Machine.Machine.sequential_evaluate">
+<code class="descname">sequential_evaluate</code><span class="sig-paren">(</span><em>N=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/Machine.html#Machine.sequential_evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.sequential_evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine.sequential_evaluate" title="Tetris.mods.Machines.Machine.Machine.sequential_evaluate"><code class="xref py py-meth docutils literal"><span class="pre">sequential_evaluate()</span></code></a> evaluates expected return of start state given policy.              This method does not use multiprocessing.</p>
 <p>Simulate a game with <em>N</em> many games and return mean and variance of returns.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -180,6 +361,107 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="Tetris.mods.Machines.Machine.Machine.Pi">
+<code class="descname">Pi</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/Machine.html#Machine.Pi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.Pi" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine.Pi" title="Tetris.mods.Machines.Machine.Machine.Pi"><code class="xref py py-meth docutils literal"><span class="pre">Pi()</span></code></a> returns a probability distribution of actions given <em>state</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> (<em>tuple</em>) &#8211; board state in a tuple form.                See <a class="reference internal" href="Tetris.mods.html#Tetris.mods.Board.Board.S" title="Tetris.mods.Board.Board.S"><code class="xref py py-meth docutils literal"><span class="pre">Tetris.mods.Board.Board.S()</span></code></a> for details.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns pi:</th><td class="field-body">probability distribution of actions. must sum to 1.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.Machine.Machine.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>N=10000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/Machine.html#Machine.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine.evaluate" title="Tetris.mods.Machines.Machine.Machine.evaluate"><code class="xref py py-meth docutils literal"><span class="pre">evaluate()</span></code></a> evaluates expected return of start state given policy.</p>
+<p>Simulate a game with <em>N</em> many games and return mean and variance of returns.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>N</strong> (<em>int</em>) &#8211; number of roll-outs</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns result:</th><td class="field-body">(mean(return), var(return))</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.Machine.Machine.MC_V">
+<code class="descname">MC_V</code><span class="sig-paren">(</span><em>state</em>, <em>maxtime=None</em>, <em>N=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/Machine.html#Machine.MC_V"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.MC_V" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine.MC_V" title="Tetris.mods.Machines.Machine.Machine.MC_V"><code class="xref py py-meth docutils literal"><span class="pre">MC_V()</span></code></a> calculates Value of a state using Monte Carlo method.              Stopping condition of Monte Carlo simulation can be given in two ways: <em>maxtime</em> and <em>N</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>maxtime</strong> (<em>float</em>) &#8211; maximum computation time</li>
+<li><strong>N</strong> (<em>int</em>) &#8211; number of roll-outs</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns result:</th><td class="field-body"><p class="first">(mean(return), var(return))</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.Machine.Machine.MC_Q">
+<code class="descname">MC_Q</code><span class="sig-paren">(</span><em>state</em>, <em>action</em>, <em>maxtime=None</em>, <em>N=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/Machine.html#Machine.MC_Q"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.MC_Q" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine.MC_Q" title="Tetris.mods.Machines.Machine.Machine.MC_Q"><code class="xref py py-meth docutils literal"><span class="pre">MC_Q()</span></code></a> calculates Value of a state-action using Monte Carlo method.               Stopping condition of Monte Carlo simulation can be given in two ways: <em>maxtime</em> and <em>N</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>maxtime</strong> (<em>float</em>) &#8211; maximum computation time</li>
+<li><strong>N</strong> (<em>int</em>) &#8211; number of roll-outs</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns result:</th><td class="field-body"><p class="first">(mean(return), var(return))</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.Machine.Machine.worker">
+<code class="descname">worker</code><span class="sig-paren">(</span><em>Q</em>, <em>resQ</em>, <em>machine</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/Machine.html#Machine.worker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.worker" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine.worker" title="Tetris.mods.Machines.Machine.Machine.worker"><code class="xref py py-meth docutils literal"><span class="pre">worker()</span></code></a> is a method that executed MC algorithms.                 It takes a request from Q, and run it.</p>
+<p>Possible requests are:</p>
+<ol class="arabic simple">
+<li>from <a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine.MC_V" title="Tetris.mods.Machines.Machine.Machine.MC_V"><code class="xref py py-meth docutils literal"><span class="pre">MC_V()</span></code></a></li>
+<li>from <a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine.MC_Q" title="Tetris.mods.Machines.Machine.Machine.MC_Q"><code class="xref py py-meth docutils literal"><span class="pre">MC_Q()</span></code></a></li>
+</ol>
+<p>According to input type and shape, it executes following:</p>
+<ol class="arabic simple">
+<li>If None, terminate.</li>
+<li>If 0, stop any MC algorithm.</li>
+</ol>
+</dd></dl>
+
+<dl class="method">
 <dt id="Tetris.mods.Machines.Machine.Machine.phi">
 <code class="descname">phi</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/Machine.html#Machine.phi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.Machine.Machine.phi" title="Permalink to this definition">¶</a></dt>
 <dd><p><a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine.phi" title="Tetris.mods.Machines.Machine.Machine.phi"><code class="xref py py-meth docutils literal"><span class="pre">phi()</span></code></a> encodes state tuple into (2, 22, 10) tensor.</p>
@@ -187,18 +469,11 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> (<em>tuple</em>) &#8211; board state in a tuple form.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> (<em>tuple</em>) &#8211; board state in a tuple form.                See <a class="reference internal" href="Tetris.mods.html#Tetris.mods.Board.Board.S" title="Tetris.mods.Board.Board.S"><code class="xref py py-meth docutils literal"><span class="pre">Tetris.mods.Board.Board.S()</span></code></a> for details.</td>
 </tr>
-</tbody>
-</table>
-<p>See <a class="reference internal" href="Tetris.mods.html#Tetris.mods.Board.Board.S" title="Tetris.mods.Board.Board.S"><code class="xref py py-meth docutils literal"><span class="pre">Tetris.mods.Board.Board.S()</span></code></a> for details.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return phi:</th><td class="field-body">binary (2, 22, 10) state tensor</td>
+<tr class="field-even field"><th class="field-name">Return phi:</th><td class="field-body">binary (2, 22, 10) state tensor</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">numpy.ndarray</td>
 </tr>
 </tbody>
 </table>
@@ -271,58 +546,306 @@
 <span id="tetris-mods-machines-neuralmachine-module"></span><h2>Tetris.mods.Machines.NeuralMachine module<a class="headerlink" href="#module-Tetris.mods.Machines.NeuralMachine" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine">
-<em class="property">class </em><code class="descclassname">Tetris.mods.Machines.NeuralMachine.</code><code class="descname">NeuralMachine</code><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#NeuralMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">Tetris.mods.Machines.NeuralMachine.</code><code class="descname">NeuralMachine</code><span class="sig-paren">(</span><em>name</em>, <em>batch_size=128</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#NeuralMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#Tetris.mods.Machines.Machine.Machine" title="Tetris.mods.Machines.Machine.Machine"><code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Machines.Machine.Machine</span></code></a></p>
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.model">
+<code class="descname">model</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Neural network for machine.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.f">
+<code class="descname">f</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.f" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal"><span class="pre">theano.function</span></code> instance which is called in <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.Pi" title="Tetris.mods.Machines.NeuralMachine.NeuralMachine.Pi"><code class="xref py py-meth docutils literal"><span class="pre">Pi()</span></code></a>. Takes (1, 2, h, w) tensor and outputs (5,) tensor.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.S">
+<code class="descname">S</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.S" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal"><span class="pre">theano.tensor</span></code> variable which is an input of neural network. It is a (None, 2, h, w) tensor.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.P">
+<code class="descname">P</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.P" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal"><span class="pre">theano.tensor</span></code> variable which is an output of neural network. It can be policy for <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine" title="Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine"><code class="xref py py-class docutils literal"><span class="pre">CNNPolicyMachine</span></code></a> or value for <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNValueMachine" title="Tetris.mods.Machines.NeuralMachine.CNNValueMachine"><code class="xref py py-class docutils literal"><span class="pre">CNNValueMachine</span></code></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.pi">
+<code class="descname">pi</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.pi" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal"><span class="pre">theano.tensor</span></code> variable which is an output policy of neural network. For PolicyMachine, <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.pi" title="Tetris.mods.Machines.NeuralMachine.NeuralMachine.pi"><code class="xref py py-attr docutils literal"><span class="pre">pi</span></code></a> and <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.P" title="Tetris.mods.Machines.NeuralMachine.NeuralMachine.P"><code class="xref py py-attr docutils literal"><span class="pre">P</span></code></a> can be identical.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.params">
+<code class="descname">params</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.params" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal"><span class="pre">list</span></code> variable which is a list of trainable parameter of neural networks.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.batch_size">
+<code class="descname">batch_size</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.batch_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Size of batch to be used during training.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.name">
+<code class="descname">name</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of machine. Used to save weights.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>N=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-meth docutils literal"><span class="pre">sequential_evaluate()</span></code> evaluates expected return of start state given policy.              This method does not use multiprocessing.</p>
+<p>Simulate a game with <em>N</em> many games and return mean and variance of returns.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>N</strong> (<em>int</em>) &#8211; number of roll-outs</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns result:</th><td class="field-body">(mean(return), var(return))</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.build_model">
 <code class="descname">build_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#NeuralMachine.build_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.build_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.build_model" title="Tetris.mods.Machines.NeuralMachine.NeuralMachine.build_model"><code class="xref py py-meth docutils literal"><span class="pre">build_model()</span></code></a> specifies model architecture.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.compile_model">
-<code class="descname">compile_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#NeuralMachine.compile_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.compile_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">compile_model</code><span class="sig-paren">(</span><em>lr=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#NeuralMachine.compile_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.compile_model" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.compile_model" title="Tetris.mods.Machines.NeuralMachine.NeuralMachine.compile_model"><code class="xref py py-meth docutils literal"><span class="pre">compile_model()</span></code></a> is a widely used compilation function.            This procedure is necessary only when Keras fit function is used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>lr</strong> (<em>float</em>) &#8211; learning rate of Adadelta optimizer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.load_weights">
 <code class="descname">load_weights</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#NeuralMachine.load_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.load_weights" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.load_weights" title="Tetris.mods.Machines.NeuralMachine.NeuralMachine.load_weights"><code class="xref py py-meth docutils literal"><span class="pre">load_weights()</span></code></a> loads weight from binary file.             File name is attained from its class name and architecture.</p>
+<p>For example, &#8216;CNNPolicyMachine_20x4&#8217;</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.save_weights">
 <code class="descname">save_weights</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#NeuralMachine.save_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.save_weights" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.save_weights" title="Tetris.mods.Machines.NeuralMachine.NeuralMachine.save_weights"><code class="xref py py-meth docutils literal"><span class="pre">save_weights()</span></code></a> save weight to binary file.                File name is attained from its class name and architecture.</p>
+<p>For example, &#8216;CNNPolicyMachine_20x4&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.Pi">
+<code class="descname">Pi</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#NeuralMachine.Pi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.Pi" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.Pi" title="Tetris.mods.Machines.NeuralMachine.NeuralMachine.Pi"><code class="xref py py-meth docutils literal"><span class="pre">Pi()</span></code></a> returns a probability distribution of actions given <em>state</em>.                 For <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine" title="Tetris.mods.Machines.NeuralMachine.NeuralMachine"><code class="xref py py-class docutils literal"><span class="pre">NeuralMachine</span></code></a>, this is done by calling <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.f" title="Tetris.mods.Machines.NeuralMachine.NeuralMachine.f"><code class="xref py py-attr docutils literal"><span class="pre">f</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> (<em>tuple</em>) &#8211; board state in a tuple form.                See <a class="reference internal" href="Tetris.mods.html#Tetris.mods.Board.Board.S" title="Tetris.mods.Board.Board.S"><code class="xref py py-meth docutils literal"><span class="pre">Tetris.mods.Board.Board.S()</span></code></a> for details.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns pi:</th><td class="field-body">probability distribution of actions. must sum to 1.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="Tetris.mods.Machines.NeuralMachine.NeuralMachine.load_dataset">
 <code class="descname">load_dataset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#NeuralMachine.load_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.load_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine.load_dataset" title="Tetris.mods.Machines.NeuralMachine.NeuralMachine.load_dataset"><code class="xref py py-meth docutils literal"><span class="pre">load_dataset()</span></code></a> loads <strong>trajectory</strong> data. Trajectory is a tuple of                (S, A, R, S&#8217;). Thus, it sets <strong>X</strong>, <strong>A</strong>, <strong>Y</strong>, <strong>R</strong>, <strong>Xp</strong>.</p>
+<ol class="arabic simple">
+<li><strong>X</strong> : (None, 2, h, w), float32</li>
+<li><strong>A</strong> : (None, ), int32</li>
+<li><strong>Y</strong> : (None, 5), float32</li>
+<li><strong>R</strong> : (None, ), float32</li>
+<li><strong>Xp</strong> : (None, 2, h, w), float32</li>
+</ol>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine">
+<em class="property">class </em><code class="descclassname">Tetris.mods.Machines.NeuralMachine.</code><code class="descname">CNNPolicyMachine</code><span class="sig-paren">(</span><em>name='CNNPolicyMachine'</em>, <em>batch_size=2048</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNPolicyMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine" title="Tetris.mods.Machines.NeuralMachine.NeuralMachine"><code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Machines.NeuralMachine.NeuralMachine</span></code></a></p>
+<p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine" title="Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine"><code class="xref py py-class docutils literal"><span class="pre">CNNPolicyMachine</span></code></a> is machine with CNN based <strong>Policy approximating</strong> machine.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; name of machine</li>
+<li><strong>batch_size</strong> (<em>int</em>) &#8211; size of batch to be used during training</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine.instantiate">
+<code class="descname">instantiate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNPolicyMachine.instantiate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine.instantiate" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine.instantiate" title="Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine.instantiate"><code class="xref py py-meth docutils literal"><span class="pre">instantiate()</span></code></a> instantiates neural network. It builds model and set tensor parameters              including <code class="xref py py-attr docutils literal"><span class="pre">S</span></code>, <code class="xref py py-attr docutils literal"><span class="pre">P</span></code>, <code class="xref py py-attr docutils literal"><span class="pre">pi</span></code>, and <code class="xref py py-attr docutils literal"><span class="pre">params</span></code>.                 Also, the function <code class="xref py py-attr docutils literal"><span class="pre">f</span></code> is compiled.               After building model, it loads model weights.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine.build_model">
+<code class="descname">build_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNPolicyMachine.build_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine.build_model" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine.build_model" title="Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine.build_model"><code class="xref py py-meth docutils literal"><span class="pre">build_model()</span></code></a> specified model architecture.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns model:</th><td class="field-body">keras model</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">keras.models</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine.train">
+<code class="descname">train</code><span class="sig-paren">(</span><em>nb_epoch=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNPolicyMachine.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine.train" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine.train" title="Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine.train"><code class="xref py py-meth docutils literal"><span class="pre">train()</span></code></a> is a special training function for <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine" title="Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine"><code class="xref py py-class docutils literal"><span class="pre">CNNPolicyMachine</span></code></a>.</p>
+<p>Since <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine" title="Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine"><code class="xref py py-class docutils literal"><span class="pre">CNNPolicyMachine</span></code></a> has a policy-approximating model, train the             model just like solving a <strong>classification</strong> problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nb_epoch</strong> (<em>int</em>) &#8211; number of epoch</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNValueMachine">
+<em class="property">class </em><code class="descclassname">Tetris.mods.Machines.NeuralMachine.</code><code class="descname">CNNValueMachine</code><span class="sig-paren">(</span><em>name='CNNValueMachine'</em>, <em>batch_size=1024</em>, <em>v_to_pi='softmax'</em>, <em>epsilon=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNValueMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNValueMachine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine" title="Tetris.mods.Machines.NeuralMachine.NeuralMachine"><code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Machines.NeuralMachine.NeuralMachine</span></code></a></p>
+<p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNValueMachine" title="Tetris.mods.Machines.NeuralMachine.CNNValueMachine"><code class="xref py py-class docutils literal"><span class="pre">CNNValueMachine</span></code></a> is machine with CNN based <strong>Value approximating</strong> machine.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; name of machine</li>
+<li><strong>batch_size</strong> (<em>int</em>) &#8211; size of batch to be used during training</li>
+<li><strong>v_to_pi</strong> (<em>str</em>) &#8211; way to get pi from Value. (&#8216;greedy&#8217; or &#8216;softmax&#8217; or &#8216;e-greedy&#8217;)</li>
+<li><strong>epsilon</strong> (<em>float</em>) &#8211; epsilon value to be used when <em>v_to_pi</em> is &#8216;e-greedy&#8217;</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNValueMachine.q">
+<code class="descname">q</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNValueMachine.q" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal"><span class="pre">theano.function</span></code> instance which calculates Q of actions. Takes (None, 2, h, w) tensor and outputs (None, 5) tensor.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNValueMachine.v_to_pi">
+<code class="descname">v_to_pi</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNValueMachine.v_to_pi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Way to get pi from Value. (&#8216;greedy&#8217; or &#8216;softmax&#8217; or &#8216;e-greedy&#8217;)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNValueMachine.epsilon">
+<code class="descname">epsilon</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNValueMachine.epsilon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Epsilon value to be used when <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNValueMachine.v_to_pi" title="Tetris.mods.Machines.NeuralMachine.CNNValueMachine.v_to_pi"><code class="xref py py-attr docutils literal"><span class="pre">v_to_pi</span></code></a> is &#8216;e-greedy&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNValueMachine.instantiate">
+<code class="descname">instantiate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNValueMachine.instantiate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNValueMachine.instantiate" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNValueMachine.instantiate" title="Tetris.mods.Machines.NeuralMachine.CNNValueMachine.instantiate"><code class="xref py py-meth docutils literal"><span class="pre">instantiate()</span></code></a> instantiates neural network. It builds model and set tensor parameters              including <code class="xref py py-attr docutils literal"><span class="pre">S</span></code>, <code class="xref py py-attr docutils literal"><span class="pre">P</span></code>, <code class="xref py py-attr docutils literal"><span class="pre">pi</span></code>, and <code class="xref py py-attr docutils literal"><span class="pre">params</span></code>.                 Also, the function <code class="xref py py-attr docutils literal"><span class="pre">f</span></code> and <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNValueMachine.q" title="Tetris.mods.Machines.NeuralMachine.CNNValueMachine.q"><code class="xref py py-attr docutils literal"><span class="pre">q</span></code></a> are compiled.                After building model, it loads model weights.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNValueMachine.build_model">
+<code class="descname">build_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNValueMachine.build_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNValueMachine.build_model" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNValueMachine.build_model" title="Tetris.mods.Machines.NeuralMachine.CNNValueMachine.build_model"><code class="xref py py-meth docutils literal"><span class="pre">build_model()</span></code></a> specified model architecture.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns model:</th><td class="field-body">keras model</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">keras.models</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNValueMachine.get_pi_from_v">
+<code class="descname">get_pi_from_v</code><span class="sig-paren">(</span><em>Q</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNValueMachine.get_pi_from_v"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNValueMachine.get_pi_from_v" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="Tetris.mods.Machines.NeuralMachine.CNNMachine">
-<em class="property">class </em><code class="descclassname">Tetris.mods.Machines.NeuralMachine.</code><code class="descname">CNNMachine</code><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNMachine" title="Permalink to this definition">¶</a></dt>
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine">
+<em class="property">class </em><code class="descclassname">Tetris.mods.Machines.NeuralMachine.</code><code class="descname">CNNActorCriticMachine</code><span class="sig-paren">(</span><em>name='CNNActorCriticMachine'</em>, <em>batch_size=2048</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNActorCriticMachine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.NeuralMachine" title="Tetris.mods.Machines.NeuralMachine.NeuralMachine"><code class="xref py py-class docutils literal"><span class="pre">Tetris.mods.Machines.NeuralMachine.NeuralMachine</span></code></a></p>
-<dl class="method">
-<dt id="Tetris.mods.Machines.NeuralMachine.CNNMachine.instantiate">
-<code class="descname">instantiate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNMachine.instantiate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNMachine.instantiate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine" title="Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine"><code class="xref py py-class docutils literal"><span class="pre">CNNActorCriticMachine</span></code></a> is machine with CNN based actor-critic machine.  Actor is a model which approximates <strong>Policy</strong>, while   critic is a model which approximates <strong>Value</strong>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; name of machine</li>
+<li><strong>batch_size</strong> (<em>int</em>) &#8211; size of batch to be used during training</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine.S2">
+<code class="descname">S2</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine.S2" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal"><span class="pre">theano.tensor</span></code> variable which is an input of neural network. It is a (None, 2, h, w) tensor.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine.P2">
+<code class="descname">P2</code><em class="property"> = None</em><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine.P2" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal"><span class="pre">theano.tensor</span></code> variable which is an output of neural network. It can be policy for <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine" title="Tetris.mods.Machines.NeuralMachine.CNNPolicyMachine"><code class="xref py py-class docutils literal"><span class="pre">CNNPolicyMachine</span></code></a> or value for <a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNValueMachine" title="Tetris.mods.Machines.NeuralMachine.CNNValueMachine"><code class="xref py py-class docutils literal"><span class="pre">CNNValueMachine</span></code></a>.</p>
+</dd></dl>
 
 <dl class="method">
-<dt id="Tetris.mods.Machines.NeuralMachine.CNNMachine.Pi">
-<code class="descname">Pi</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNMachine.Pi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNMachine.Pi" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine.instantiate">
+<code class="descname">instantiate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNActorCriticMachine.instantiate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine.instantiate" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine.instantiate" title="Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine.instantiate"><code class="xref py py-meth docutils literal"><span class="pre">instantiate()</span></code></a> instantiates neural network. It builds model and set tensor parameters              including <code class="xref py py-attr docutils literal"><span class="pre">S</span></code>, <code class="xref py py-attr docutils literal"><span class="pre">P</span></code>, <code class="xref py py-attr docutils literal"><span class="pre">pi</span></code>, and <code class="xref py py-attr docutils literal"><span class="pre">params</span></code>.                 Also, the function <code class="xref py py-attr docutils literal"><span class="pre">f</span></code> and <code class="xref py py-attr docutils literal"><span class="pre">q</span></code> are compiled.                After building model, it loads model weights.</p>
+</dd></dl>
 
 <dl class="method">
-<dt id="Tetris.mods.Machines.NeuralMachine.CNNMachine.build_model">
-<code class="descname">build_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNMachine.build_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNMachine.build_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="Tetris.mods.Machines.NeuralMachine.CNNMachine.train">
-<code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNMachine.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNMachine.train" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine.build_model">
+<code class="descname">build_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Tetris/mods/Machines/NeuralMachine.html#CNNActorCriticMachine.build_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine.build_model" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine.build_model" title="Tetris.mods.Machines.NeuralMachine.CNNActorCriticMachine.build_model"><code class="xref py py-meth docutils literal"><span class="pre">build_model()</span></code></a> specified model architecture.</p>
+<p><code class="xref py py-attr docutils literal"><span class="pre">S</span></code>, <code class="xref py py-attr docutils literal"><span class="pre">P</span></code>, <code class="xref py py-attr docutils literal"><span class="pre">pi</span></code>, and <code class="xref py py-attr docutils literal"><span class="pre">params</span></code> are set.
+<code class="xref py py-attr docutils literal"><span class="pre">f</span></code> is compiled.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -363,14 +886,11 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -389,14 +909,14 @@
         <li class="right" >
           <a href="Tetris.mods.Interfaces.html" title="Tetris.mods.Interfaces package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Tetris  documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="Tetris.html" >Tetris package</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="Tetris.mods.html" >Tetris.mods package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Tetris  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="Tetris.html" >Tetris package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="Tetris.mods.html" >Tetris.mods package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2016, Author.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2016, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
     </div>
   </body>
 </html>

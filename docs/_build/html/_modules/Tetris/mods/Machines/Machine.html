@@ -2,11 +2,11 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tetris.mods.Machines.Machine &mdash; Tetris  documentation</title>
+    <title>Tetris.mods.Machines.Machine &#8212; Tetris  documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -36,8 +36,8 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">Tetris  documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Tetris  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -47,29 +47,22 @@
           <div class="body" role="main">
             
   <h1>Source code for Tetris.mods.Machines.Machine</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">_pickle</span>
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="k">import</span> <span class="n">Pool</span><span class="p">,</span> <span class="n">Manager</span><span class="p">,</span> <span class="n">Process</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="nb">reduce</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span> <span class="nn">queue</span>
 
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">..Board</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">..Interfaces.BoardInterface</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">..Board</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">..Interfaces.BoardInterface</span> <span class="k">import</span> <span class="o">*</span>
 
-<div class="viewcode-block" id="one"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.Machine.one">[docs]</a><span class="k">def</span> <span class="nf">one</span><span class="p">(</span><span class="n">tup</span><span class="p">):</span>
-	<span class="n">machine</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">tup</span>
-	<span class="n">machine</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">machine</span><span class="p">)</span>
-	<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="n">interface</span> <span class="o">=</span> <span class="n">BoardInterface</span><span class="p">(</span><span class="n">machine</span><span class="o">=</span><span class="n">machine</span><span class="p">)</span>
-	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-		<span class="n">r</span> <span class="o">=</span> <span class="n">interface</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-		<span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-	<span class="k">return</span> <span class="n">results</span>
-</div>
-<div class="viewcode-block" id="Machine"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.Machine.Machine">[docs]</a><span class="k">class</span> <span class="nc">Machine</span><span class="p">:</span>
+
+
+<div class="viewcode-block" id="Machine"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.Machine">[docs]</a><span class="k">class</span> <span class="nc">Machine</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	:class:`Machine` is an abstract base class for Tetris agents.</span>
 
@@ -78,23 +71,58 @@
 	<span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
 	<span class="n">minf</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
 	<span class="n">maxf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proc_num</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">proc_num</span> <span class="o">=</span> <span class="n">proc_num</span>
+		<span class="sd">&quot;&quot;&quot;Number of processes to use when MC algorithm runs&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">proc_num</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">proc_num</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
 
-	<span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="Machine.Pi"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.Machine.Machine.Pi">[docs]</a>	<span class="k">def</span> <span class="nf">Pi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">workers</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="sd">&quot;&quot;&quot;List of :class:`multiprocessing.Process` instances which are workers&quot;&quot;&quot;</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">Queues</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="sd">&quot;&quot;&quot;List of :class:`queue.Queue` to order workers&quot;&quot;&quot;</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">resQ</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="sd">&quot;&quot;&quot;A :class:`queue.Queue` instance to get results. All workers put results to here.&quot;&quot;&quot;</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">Board</span><span class="o">.</span><span class="n">width</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">Board</span><span class="o">.</span><span class="n">height</span>
+
+<div class="viewcode-block" id="Machine.spawn_workers"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.Machine.spawn_workers">[docs]</a>	<span class="k">def</span> <span class="nf">spawn_workers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		:meth:`Pi` returns a probability distribution of actions given *state*.</span>
+<span class="sd">		:meth:`spawn_workers` spawns workers if no worker exists, and do nothing if workers exist.</span>
 
-<span class="sd">		:param tuple state: board state in a tuple form.</span>
-<span class="sd">		See :meth:`Tetris.mods.Board.Board.S` for details.</span>
-
-<span class="sd">		:returns pi: probability distribution of actions. must sum to 1.</span>
-<span class="sd">		:rtype: list</span>
+<span class="sd">		Use this method in advance any MC algorithm runs.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-			</div>
-<div class="viewcode-block" id="Machine.evaluate"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.Machine.Machine.evaluate">[docs]</a>	<span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">workers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">copies</span> <span class="o">=</span> <span class="p">[</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proc_num</span><span class="p">)]</span>
+		<span class="n">manager</span> <span class="o">=</span> <span class="n">Manager</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Queues</span> <span class="o">=</span> <span class="p">[</span><span class="n">manager</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proc_num</span><span class="p">)]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">resQ</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">workers</span> <span class="o">=</span> <span class="p">[</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">worker</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Queues</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">resQ</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">copies</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> \
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proc_num</span><span class="p">)]</span>
+
+		<span class="k">for</span> <span class="n">worker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">:</span>
+			<span class="n">worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Machine.kill_workers"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.Machine.kill_workers">[docs]</a>	<span class="k">def</span> <span class="nf">kill_workers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">workers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">Queue</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Queues</span><span class="p">:</span>
+				<span class="n">Queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+			<span class="k">for</span> <span class="n">worker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">:</span>
+				<span class="n">worker</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+				
+			<span class="bp">self</span><span class="o">.</span><span class="n">workers</span> <span class="o">=</span> <span class="kc">None</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Queues</span> <span class="o">=</span> <span class="kc">None</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">resQ</span> <span class="o">=</span> <span class="kc">None</span></div>
+		
+<div class="viewcode-block" id="Machine.sequential_evaluate"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.Machine.sequential_evaluate">[docs]</a>	<span class="k">def</span> <span class="nf">sequential_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		:meth:`Evaluate` evaluates expected return of start state given policy.</span>
+<span class="sd">		:meth:`sequential_evaluate` evaluates expected return of start state given policy.\</span>
+<span class="sd">		This method does not use multiprocessing.</span>
 
 <span class="sd">		Simulate a game with *N* many games and return mean and variance of returns.</span>
 
@@ -103,21 +131,299 @@
 <span class="sd">		:returns result: (mean(return), var(return))</span>
 <span class="sd">		:rtype: tuple</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="n">proc_num</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
 		<span class="n">s</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-		<span class="k">with</span> <span class="n">Pool</span><span class="p">()</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-			<span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">one</span><span class="p">,</span> <span class="p">[(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">//</span><span class="n">proc_num</span><span class="p">)]</span> <span class="o">*</span> <span class="n">proc_num</span><span class="p">)</span>
-		<span class="n">Rs</span> <span class="o">=</span> <span class="nb">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
-		<span class="n">e</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
-		<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Evalute completed. Time elapsed : </span><span class="si">%.1f</span><span class="s1">s&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">e</span><span class="o">-</span><span class="n">s</span><span class="p">))</span>
-		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Rs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
-		</div>
-<div class="viewcode-block" id="Machine.phi"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.Machine.Machine.phi">[docs]</a>	<span class="k">def</span> <span class="nf">phi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+		<span class="n">Rs</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="n">dummyInterface</span> <span class="o">=</span> <span class="n">BoardInterface</span><span class="p">(</span><span class="n">machine</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+			<span class="n">r</span> <span class="o">=</span> <span class="n">dummyInterface</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+			<span class="n">Rs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+		<span class="n">mean</span><span class="p">,</span> <span class="n">var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Rs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+
+		<span class="n">e</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Evaluated. Time elapsed : </span><span class="si">%.1f</span><span class="s1">s&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">e</span><span class="o">-</span><span class="n">s</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span></div>
+	
+	<span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Machine.Pi"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.Machine.Pi">[docs]</a>	<span class="k">def</span> <span class="nf">Pi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`Pi` returns a probability distribution of actions given *state*.</span>
+
+<span class="sd">		:param tuple state: board state in a tuple form. \</span>
+<span class="sd">		See :meth:`Tetris.mods.Board.Board.S` for details.</span>
+
+<span class="sd">		:returns pi: probability distribution of actions. must sum to 1.</span>
+<span class="sd">		:rtype: list</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+		
+<div class="viewcode-block" id="Machine.evaluate"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.Machine.evaluate">[docs]</a>	<span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`evaluate` evaluates expected return of start state given policy.</span>
+
+<span class="sd">		Simulate a game with *N* many games and return mean and variance of returns.</span>
+
+<span class="sd">		:param int N: number of roll-outs</span>
+
+<span class="sd">		:returns result: (mean(return), var(return))</span>
+<span class="sd">		:rtype: tuple</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">spawn_workers</span><span class="p">()</span>
+
+		<span class="n">s</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">N</span><span class="o">&lt;=</span><span class="mi">100</span><span class="p">:</span>		
+			<span class="n">a</span> <span class="o">=</span> <span class="n">DummyInterface</span><span class="p">()</span>
+			<span class="n">state</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">S</span><span class="p">()</span>
+			<span class="n">mean</span><span class="p">,</span> <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MC_V</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">a</span> <span class="o">=</span> <span class="n">DummyInterface</span><span class="p">()</span>
+			<span class="n">Means</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="n">Vars</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+				<span class="n">a</span><span class="o">.</span><span class="n">S0</span><span class="p">()</span>
+				<span class="n">state</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">S</span><span class="p">()</span>
+				<span class="n">mean</span><span class="p">,</span> <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MC_V</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="o">//</span><span class="mi">10</span><span class="p">)</span>
+				<span class="n">Means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
+				<span class="n">Vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+
+			<span class="n">mean</span><span class="p">,</span> <span class="n">var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Means</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Vars</span><span class="p">)</span>
+
+		<span class="n">e</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+		
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Evaluated. Time elapsed : </span><span class="si">%.1f</span><span class="s1">s&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">e</span><span class="o">-</span><span class="n">s</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">kill_workers</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">var</span></div>
+
+<div class="viewcode-block" id="Machine.MC_V"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.Machine.MC_V">[docs]</a>	<span class="k">def</span> <span class="nf">MC_V</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">maxtime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`MC_V` calculates Value of a state using Monte Carlo method. \</span>
+<span class="sd">		Stopping condition of Monte Carlo simulation can be given in two ways: *maxtime* and *N*.</span>
+
+<span class="sd">		:param float maxtime: maximum computation time</span>
+<span class="sd">		:param int N: number of roll-outs</span>
+
+<span class="sd">		:returns result: (mean(return), var(return))</span>
+<span class="sd">		:rtype: tuple</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="n">maxtime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">N</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Stopping condition must be specified.&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">spawn_workers</span><span class="p">()</span>
+		<span class="n">starttime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+		<span class="c1">#1. Empty current resQ</span>
+		<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">resQ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+			<span class="k">except</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
+				<span class="k">break</span>
+
+		<span class="c1">#2. Order to workers.</span>
+		<span class="k">for</span> <span class="n">Queue</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Queues</span><span class="p">:</span>
+			<span class="n">Queue</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span>
+
+		<span class="n">returnhistory</span> <span class="o">=</span> <span class="p">[]</span>
+
+		<span class="c1">#3. Wait for workers.</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+			<span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resQ</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+			<span class="n">returnhistory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+			<span class="k">if</span> <span class="n">maxtime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">starttime</span> <span class="o">&gt;=</span> <span class="n">maxtime</span><span class="p">:</span>
+					<span class="k">break</span>
+
+		<span class="c1">#4. Stop workers.</span>
+		<span class="k">for</span> <span class="n">Queue</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Queues</span><span class="p">:</span>
+			<span class="n">Queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">returnhistory</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">returnhistory</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Machine.MC_Q"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.Machine.MC_Q">[docs]</a>	<span class="k">def</span> <span class="nf">MC_Q</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">maxtime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`MC_Q` calculates Value of a state-action using Monte Carlo method. \</span>
+<span class="sd">		Stopping condition of Monte Carlo simulation can be given in two ways: *maxtime* and *N*.</span>
+
+<span class="sd">		:param float maxtime: maximum computation time</span>
+<span class="sd">		:param int N: number of roll-outs</span>
+
+<span class="sd">		:returns result: (mean(return), var(return))</span>
+<span class="sd">		:rtype: tuple</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="n">maxtime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">N</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Stopping condition must be specified.&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">spawn_workers</span><span class="p">()</span>
+		<span class="n">starttime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+		<span class="c1">#1. Empty current resQ</span>
+		<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">resQ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+			<span class="k">except</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
+				<span class="k">break</span>
+
+		<span class="c1">#2. Order to workers.</span>
+		<span class="k">for</span> <span class="n">Queue</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Queues</span><span class="p">:</span>
+			<span class="n">Queue</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">))</span>
+
+		<span class="n">returnhistory</span> <span class="o">=</span> <span class="p">[]</span>
+
+		<span class="c1">#3. Wait for workers.</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+			<span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resQ</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+			<span class="n">returnhistory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+			<span class="k">if</span> <span class="n">maxtime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">starttime</span> <span class="o">&gt;=</span> <span class="n">maxtime</span><span class="p">:</span>
+					<span class="k">break</span>
+
+		<span class="c1">#4. Stop workers.</span>
+		<span class="k">for</span> <span class="n">Queue</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Queues</span><span class="p">:</span>
+			<span class="n">Queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">returnhistory</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">returnhistory</span><span class="p">)</span></div>
+		
+<div class="viewcode-block" id="Machine.worker"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.Machine.worker">[docs]</a>	<span class="k">def</span> <span class="nf">worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">resQ</span><span class="p">,</span> <span class="n">machine</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`worker` is a method that executed MC algorithms. \</span>
+<span class="sd">		It takes a request from Q, and run it.</span>
+
+<span class="sd">		Possible requests are:</span>
+
+<span class="sd">		1. from :meth:`MC_V`</span>
+<span class="sd">		2. from :meth:`MC_Q`</span>
+
+<span class="sd">		According to input type and shape, it executes following:</span>
+<span class="sd">		</span>
+<span class="sd">		1. If None, terminate.</span>
+<span class="sd">		2. If 0, stop any MC algorithm.</span>
+<span class="sd">		</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span><span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+
+		<span class="n">dummyInterface</span> <span class="o">=</span> <span class="n">DummyInterface</span><span class="p">(</span><span class="n">machine</span><span class="o">=</span><span class="n">machine</span><span class="p">)</span>
+		<span class="n">dummyboard</span> <span class="o">=</span> <span class="n">dummyInterface</span><span class="o">.</span><span class="n">board</span>
+
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+				<span class="n">req</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+				<span class="c1">#1. If None, terminate.</span>
+				<span class="k">if</span> <span class="n">req</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="k">return</span>
+
+				<span class="c1">#If some request, perform it.</span>
+				<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+
+					<span class="c1">#########################################</span>
+					<span class="c1">#3. If (0, state), do MicroMC ##</span>
+					<span class="k">if</span> <span class="n">req</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+						<span class="n">state</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+						<span class="n">returnhistory</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+						<span class="n">runhistory</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+
+						<span class="n">terminate_now</span> <span class="o">=</span> <span class="kc">False</span>
+
+						<span class="k">while</span> <span class="ow">not</span> <span class="n">terminate_now</span><span class="p">:</span>
+							<span class="n">dummyInterface</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+							<span class="n">dummyInterface</span><span class="o">.</span><span class="n">setS</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+							<span class="n">A0</span> <span class="o">=</span> <span class="kc">None</span>
+							<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+								<span class="n">S_t</span> <span class="o">=</span> <span class="n">dummyInterface</span><span class="o">.</span><span class="n">S</span><span class="p">()</span>
+								<span class="n">A_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">default_Pi</span><span class="p">(</span><span class="n">S_t</span><span class="p">))</span>
+								<span class="n">dummyInterface</span><span class="o">.</span><span class="n">perform_action</span><span class="p">(</span><span class="n">A_t</span><span class="p">)</span>
+								
+								<span class="k">if</span> <span class="n">A0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+									<span class="n">A0</span> <span class="o">=</span> <span class="n">A_t</span>
+
+								<span class="k">if</span> <span class="ow">not</span> <span class="n">Q</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+									<span class="k">try</span><span class="p">:</span>
+										<span class="n">req</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+										<span class="c1">#2. If 0, stop any MC algorithm.</span>
+										<span class="k">if</span> <span class="n">req</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+											<span class="n">terminate_now</span><span class="o">=</span><span class="kc">True</span>
+											<span class="k">break</span>
+										<span class="k">elif</span> <span class="n">req</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+											<span class="k">return</span>
+									<span class="k">except</span> <span class="ne">EOFError</span> <span class="ow">or</span> <span class="ne">BrokenPipeError</span><span class="p">:</span>
+										<span class="k">return</span>
+								
+								<span class="k">if</span> <span class="n">dummyboard</span><span class="o">.</span><span class="n">isOver</span><span class="p">:</span>
+									<span class="k">break</span>
+
+							<span class="n">returnhistory</span><span class="p">[</span><span class="n">A0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dummyInterface</span><span class="o">.</span><span class="n">G</span>
+							<span class="n">runhistory</span><span class="p">[</span><span class="n">A0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+						<span class="n">resQ</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">returnhistory</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">runhistory</span><span class="o">.</span><span class="n">copy</span><span class="p">()))</span>
+
+					<span class="c1">#############################################</span>
+					<span class="c1">#4. If (1, state), do MC until termination ##</span>
+					<span class="k">elif</span> <span class="n">req</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+						<span class="n">state</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+						<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+							<span class="n">dummyInterface</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+							<span class="n">dummyInterface</span><span class="o">.</span><span class="n">isStarted</span><span class="o">=</span><span class="kc">True</span>
+							<span class="n">dummyInterface</span><span class="o">.</span><span class="n">setS</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>						
+							<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+								<span class="n">dummyInterface</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+								<span class="k">if</span> <span class="n">dummyInterface</span><span class="o">.</span><span class="n">isOver</span><span class="p">:</span>
+									<span class="k">break</span>
+
+								<span class="k">try</span><span class="p">:</span>
+									<span class="n">req</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+									<span class="c1">#2. If 0, stop any MC algorithm.</span>
+									<span class="k">if</span> <span class="n">req</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+										<span class="k">break</span>
+									<span class="k">elif</span> <span class="n">req</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+										<span class="k">return</span>
+								<span class="k">except</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
+									<span class="k">pass</span>
+
+							<span class="n">resQ</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">dummyInterface</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
+
+					<span class="c1">#####################################################</span>
+					<span class="c1">#5. If (2, state, action), do MC until termination ##</span>
+					<span class="k">elif</span> <span class="n">req</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+						<span class="n">state</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+						<span class="n">action</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+					
+						<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+							<span class="n">dummyInterface</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+							<span class="n">dummyInterface</span><span class="o">.</span><span class="n">setS</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+						
+							<span class="n">dummyInterface</span><span class="o">.</span><span class="n">perform_action</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+							<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+								<span class="n">dummyInterface</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+								<span class="k">if</span> <span class="n">dummyInterface</span><span class="o">.</span><span class="n">isOver</span><span class="p">:</span>
+									<span class="k">break</span>
+
+							<span class="n">resQ</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">dummyInterface</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
+
+							<span class="k">try</span><span class="p">:</span>
+								<span class="n">req</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+								<span class="c1">#2. If 0, stop any MC algorithm.</span>
+								<span class="k">if</span> <span class="n">req</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+									<span class="k">break</span>
+								<span class="k">elif</span> <span class="n">req</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+									<span class="k">return</span>
+							<span class="k">except</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
+								<span class="k">pass</span>
+		<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+			<span class="k">pass</span></div>
+		
+	<span class="k">def</span> <span class="nf">_evaluate_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tup</span><span class="p">):</span>
+		<span class="n">machine</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">tup</span>
+		<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="n">interface</span> <span class="o">=</span> <span class="n">BoardInterface</span><span class="p">(</span><span class="n">machine</span><span class="o">=</span><span class="n">machine</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+			<span class="n">r</span> <span class="o">=</span> <span class="n">interface</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+			<span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">results</span>
+		
+<div class="viewcode-block" id="Machine.phi"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.Machine.phi">[docs]</a>	<span class="k">def</span> <span class="nf">phi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		:meth:`phi` encodes state tuple into (2, 22, 10) tensor.</span>
 <span class="sd">		</span>
-<span class="sd">		:param tuple state: board state in a tuple form.</span>
+<span class="sd">		:param tuple state: board state in a tuple form. \</span>
 <span class="sd">		See :meth:`Tetris.mods.Board.Board.S` for details.</span>
 <span class="sd">		</span>
 <span class="sd">		:return phi: binary (2, 22, 10) state tensor</span>
@@ -131,9 +437,9 @@
 		<span class="n">x_piece</span><span class="p">[</span><span class="n">Ys</span><span class="p">,</span><span class="n">Xs</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>		
 		<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([(</span><span class="n">board</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int32&#39;</span><span class="p">),</span> <span class="n">x_piece</span><span class="p">])</span>
 
-		<span class="k">return</span> <span class="n">X</span>
-</div>
-<div class="viewcode-block" id="Machine.heuristic_V"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.Machine.Machine.heuristic_V">[docs]</a>	<span class="k">def</span> <span class="nf">heuristic_V</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">X</span></div>
+
+<div class="viewcode-block" id="Machine.heuristic_V"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.Machine.heuristic_V">[docs]</a>	<span class="k">def</span> <span class="nf">heuristic_V</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		:meth:`heuristic_V` evaluates Value of a state heuristically.</span>
 
@@ -156,9 +462,9 @@
 		<span class="c1">#return.</span>
 		<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">hole_num</span><span class="p">,</span> <span class="n">penalty_sum</span><span class="p">]</span>
 		<span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span>
-		<span class="k">return</span> <span class="n">result</span>
-	</div></div>
-<div class="viewcode-block" id="StochasticMachine"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.Machine.StochasticMachine">[docs]</a><span class="k">class</span> <span class="nc">StochasticMachine</span><span class="p">(</span><span class="n">Machine</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">result</span></div></div>
+	
+<div class="viewcode-block" id="StochasticMachine"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.StochasticMachine">[docs]</a><span class="k">class</span> <span class="nc">StochasticMachine</span><span class="p">(</span><span class="n">Machine</span><span class="p">):</span>
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ep</span><span class="p">,</span> <span class="n">cool_time</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">TICK_COOLTIME</span> <span class="o">=</span> <span class="n">cool_time</span>
@@ -172,7 +478,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">TT</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">CONSIDERS</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="StochasticMachine.initialize"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.Machine.StochasticMachine.initialize">[docs]</a>	<span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StochasticMachine.initialize"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.StochasticMachine.initialize">[docs]</a>	<span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="c1">#1. number of holes.</span>
 		<span class="c1">#2. height penalty sum.</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
@@ -202,7 +508,7 @@
 		<span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">shapes</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">mAs</span><span class="p">[</span><span class="n">shape</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
 			<span class="k">for</span> <span class="n">rotate</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">effect_rots</span><span class="p">[</span><span class="n">shape</span><span class="p">]):</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">mAs</span><span class="p">[</span><span class="n">shape</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">left</span><span class="p">,</span> <span class="n">rotate</span><span class="p">]</span> <span class="k">for</span> <span class="n">left</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">)]</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">mAs</span><span class="p">[</span><span class="n">shape</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">left</span><span class="p">,</span> <span class="n">rotate</span><span class="p">]</span> <span class="k">for</span> <span class="n">left</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">Board</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">),(</span><span class="n">Board</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">))]</span>
 
 			<span class="bp">self</span><span class="o">.</span><span class="n">mA2uA</span><span class="p">[</span><span class="n">shape</span><span class="p">]</span><span class="o">=</span><span class="nb">list</span><span class="p">()</span>			
 			<span class="k">for</span> <span class="n">mA</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mAs</span><span class="p">[</span><span class="n">shape</span><span class="p">]:</span>
@@ -216,9 +522,9 @@
 					<span class="n">uAseq</span><span class="o">+=</span><span class="p">[</span><span class="n">Action</span><span class="o">.</span><span class="n">RIGHT</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">mA</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">mA2uA</span><span class="p">[</span><span class="n">shape</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uAseq</span><span class="p">)</span>
 
-		<span class="bp">self</span><span class="o">.</span><span class="n">mA</span> <span class="o">=</span> <span class="bp">None</span>
-</div>
-<div class="viewcode-block" id="StochasticMachine.Pi"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.Machine.StochasticMachine.Pi">[docs]</a>	<span class="k">def</span> <span class="nf">Pi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mA</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="StochasticMachine.Pi"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.StochasticMachine.Pi">[docs]</a>	<span class="k">def</span> <span class="nf">Pi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
 		<span class="n">board</span><span class="p">,</span> <span class="n">pieces</span><span class="p">,</span> <span class="n">piececoords</span><span class="p">,</span> <span class="n">curX</span><span class="p">,</span> <span class="n">curY</span><span class="p">,</span> <span class="n">ticks</span><span class="p">,</span> <span class="n">isOver</span> <span class="o">=</span> <span class="n">state</span>
 		<span class="n">curshape</span> <span class="o">=</span> <span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -231,7 +537,7 @@
 			<span class="k">return</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
 		<span class="c1">#2. When aimPosition is None, set it.</span>
-		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mA</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>			
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mA</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>			
 			<span class="n">con</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setmA</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 		<span class="c1">#3. give output.</span>
 		<span class="k">if</span> <span class="n">ticks</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">TICK_COOLTIME</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -241,8 +547,8 @@
 			<span class="k">return</span> <span class="n">pi</span>
 
 		<span class="k">else</span><span class="p">:</span>
-			<span class="k">return</span> <span class="bp">None</span>
-</div>
+			<span class="k">return</span> <span class="kc">None</span></div>
+
 	<span class="k">def</span> <span class="nf">_getuA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
 		<span class="c1"># if have to rotate</span>
 		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mA</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
@@ -260,7 +566,7 @@
 			<span class="k">return</span> <span class="n">Action</span><span class="o">.</span><span class="n">RIGHT</span>
 			
 		<span class="c1"># nothing to do any more.</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">mA</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mA</span> <span class="o">=</span> <span class="kc">None</span>
 		<span class="k">return</span> <span class="n">Action</span><span class="o">.</span><span class="n">SPACE</span>
 
 	<span class="k">def</span> <span class="nf">_setmA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
@@ -270,21 +576,21 @@
 		<span class="n">mA_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Qs</span><span class="p">)</span>		
 		<span class="bp">self</span><span class="o">.</span><span class="n">mA</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mAs</span><span class="p">[</span><span class="n">curshape</span><span class="p">][</span><span class="n">mA_idx</span><span class="p">])</span>
 
-<div class="viewcode-block" id="StochasticMachine.Q"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.Machine.StochasticMachine.Q">[docs]</a>	<span class="k">def</span> <span class="nf">Q</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">uAseq</span><span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">dummyboard</span><span class="o">.</span><span class="n">setS</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<div class="viewcode-block" id="StochasticMachine.Q"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.StochasticMachine.Q">[docs]</a>	<span class="k">def</span> <span class="nf">Q</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">uAseq</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dummyInterface</span><span class="o">.</span><span class="n">setS</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 		<span class="n">r</span> <span class="o">=</span> <span class="mi">0</span>
 		<span class="k">for</span> <span class="n">uA</span> <span class="ow">in</span> <span class="n">uAseq</span><span class="p">:</span>
-			<span class="n">r_</span><span class="p">,</span> <span class="n">wasValid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummyboard</span><span class="o">.</span><span class="n">T</span><span class="p">(</span><span class="n">uA</span><span class="p">)</span>
+			<span class="n">r_</span><span class="p">,</span> <span class="n">wasValid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummyInterface</span><span class="o">.</span><span class="n">perform_action</span><span class="p">(</span><span class="n">uA</span><span class="p">)</span>
 			<span class="n">r</span> <span class="o">+=</span> <span class="n">r_</span>
 			<span class="k">if</span> <span class="ow">not</span> <span class="n">wasValid</span><span class="p">:</span>
 				<span class="k">return</span> <span class="n">Machine</span><span class="o">.</span><span class="n">minf</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="n">r_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummyboard</span><span class="o">.</span><span class="n">T</span><span class="p">(</span><span class="n">Action</span><span class="o">.</span><span class="n">SPACE</span><span class="p">)</span>
+			<span class="n">r_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">dummyInterface</span><span class="o">.</span><span class="n">perform_action</span><span class="p">(</span><span class="n">Action</span><span class="o">.</span><span class="n">SPACE</span><span class="p">)</span>
 			<span class="n">r</span> <span class="o">+=</span> <span class="n">r_</span>
 			<span class="n">Sprime</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dummyboard</span><span class="o">.</span><span class="n">table</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
-			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">heuristic_V</span><span class="p">(</span><span class="n">Sprime</span><span class="p">)</span> <span class="o">+</span> <span class="n">r</span>
-</div></div>
-<div class="viewcode-block" id="StochasticMachine2"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.Machine.StochasticMachine2">[docs]</a><span class="k">class</span> <span class="nc">StochasticMachine2</span><span class="p">(</span><span class="n">Machine</span><span class="p">):</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">heuristic_V</span><span class="p">(</span><span class="n">Sprime</span><span class="p">)</span> <span class="o">+</span> <span class="n">r</span></div></div>
+
+<div class="viewcode-block" id="StochasticMachine2"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.StochasticMachine2">[docs]</a><span class="k">class</span> <span class="nc">StochasticMachine2</span><span class="p">(</span><span class="n">Machine</span><span class="p">):</span>
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ep</span><span class="p">,</span> <span class="n">cool_time</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">TICK_COOLTIME</span> <span class="o">=</span> <span class="n">cool_time</span>
@@ -298,7 +604,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">TT</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">CONSIDERS</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="StochasticMachine2.initialize"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.Machine.StochasticMachine2.initialize">[docs]</a>	<span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StochasticMachine2.initialize"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.StochasticMachine2.initialize">[docs]</a>	<span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="c1">#1. number of holes.</span>
 		<span class="c1">#2. height penalty sum.</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">60</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
@@ -329,19 +635,19 @@
 		<span class="c1">#build computation tree</span>
 		<span class="k">for</span> <span class="n">rotate</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>			
 			<span class="n">ptr</span> <span class="o">=</span> <span class="n">ptr_rotate</span>
-			<span class="k">for</span> <span class="n">left</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
+			<span class="k">for</span> <span class="n">left</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dummyInterface</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
 				<span class="n">ptr</span> <span class="o">=</span> <span class="n">ptr</span><span class="o">.</span><span class="n">get_child</span><span class="p">(</span><span class="n">Action</span><span class="o">.</span><span class="n">LEFT</span><span class="p">)</span>
 
 			<span class="n">ptr</span> <span class="o">=</span> <span class="n">ptr_rotate</span>
-			<span class="k">for</span> <span class="n">right</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
+			<span class="k">for</span> <span class="n">right</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dummyInterface</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
 				<span class="n">ptr</span> <span class="o">=</span> <span class="n">ptr</span><span class="o">.</span><span class="n">get_child</span><span class="p">(</span><span class="n">Action</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">)</span>
 
 			<span class="k">if</span> <span class="n">rotate</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
 				<span class="n">ptr_rotate</span> <span class="o">=</span> <span class="n">ptr_rotate</span><span class="o">.</span><span class="n">get_child</span><span class="p">(</span><span class="n">Action</span><span class="o">.</span><span class="n">UP</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 		
-		<span class="bp">self</span><span class="o">.</span><span class="n">uAseq</span> <span class="o">=</span> <span class="bp">None</span>
-</div>
-<div class="viewcode-block" id="StochasticMachine2.Pi"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.Machine.StochasticMachine2.Pi">[docs]</a>	<span class="k">def</span> <span class="nf">Pi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">uAseq</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="StochasticMachine2.Pi"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.StochasticMachine2.Pi">[docs]</a>	<span class="k">def</span> <span class="nf">Pi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
 		<span class="n">board</span><span class="p">,</span> <span class="n">pieces</span><span class="p">,</span> <span class="n">piececoords</span><span class="p">,</span> <span class="n">curX</span><span class="p">,</span> <span class="n">curY</span><span class="p">,</span> <span class="n">ticks</span><span class="p">,</span> <span class="n">isOver</span> <span class="o">=</span> <span class="n">state</span>
 		<span class="n">curshape</span> <span class="o">=</span> <span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -353,7 +659,7 @@
 			<span class="k">return</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
 		<span class="c1">#2. When aimPosition is None, set it.</span>
-		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">uAseq</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>			
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">uAseq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>			
 			<span class="bp">self</span><span class="o">.</span><span class="n">_setmA</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
 		<span class="c1">#3. give output.</span>
@@ -364,14 +670,14 @@
 			<span class="k">return</span> <span class="n">pi</span>
 
 		<span class="k">else</span><span class="p">:</span>
-			<span class="k">return</span> <span class="bp">None</span>
-</div>
+			<span class="k">return</span> <span class="kc">None</span></div>
+
 	<span class="k">def</span> <span class="nf">_setmA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
 		<span class="c1">#set self.uAseq</span>
 		<span class="n">board</span><span class="p">,</span> <span class="n">pieces</span><span class="p">,</span> <span class="n">piececoords</span><span class="p">,</span> <span class="n">curX</span><span class="p">,</span> <span class="n">curY</span><span class="p">,</span> <span class="n">ticks</span><span class="p">,</span> <span class="n">isOver</span> <span class="o">=</span> <span class="n">state</span>
 		<span class="n">curshape</span> <span class="o">=</span> <span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 		<span class="n">eff_rot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eff_rots</span><span class="p">[</span><span class="n">curshape</span><span class="p">]</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">dummyboard</span><span class="o">.</span><span class="n">setS</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dummyInterface</span><span class="o">.</span><span class="n">setS</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 		
 		<span class="n">Q</span><span class="p">,</span> <span class="n">uAseq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mAroot</span><span class="p">,</span> <span class="n">eff_rot</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">uAseq</span> <span class="o">=</span> <span class="n">uAseq</span>
@@ -383,46 +689,47 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">uAseq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uAseq</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">uA</span> <span class="o">=</span> <span class="n">Action</span><span class="o">.</span><span class="n">SPACE</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">uAseq</span> <span class="o">=</span> <span class="bp">None</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">uAseq</span> <span class="o">=</span> <span class="kc">None</span>
 		<span class="k">return</span> <span class="n">uA</span>
 
-<div class="viewcode-block" id="StochasticMachine2.Q"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.Machine.StochasticMachine2.Q">[docs]</a>	<span class="k">def</span> <span class="nf">Q</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">eff_rot</span><span class="p">):</span>			
+<div class="viewcode-block" id="StochasticMachine2.Q"><a class="viewcode-back" href="../../../../Tetris.mods.Machines.html#Tetris.mods.Machines.MCMachine.StochasticMachine2.Q">[docs]</a>	<span class="k">def</span> <span class="nf">Q</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">eff_rot</span><span class="p">):</span>			
 		<span class="c1">#return Q, [uAseq]</span>
 		<span class="n">ptr</span> <span class="o">=</span> <span class="n">node</span>			
 
 		<span class="c1">#1. save state</span>
-		<span class="n">before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummyboard</span><span class="o">.</span><span class="n">S</span><span class="p">()</span>
+		<span class="n">before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummyInterface</span><span class="o">.</span><span class="n">S</span><span class="p">()</span>
 
 		<span class="c1">#2. drop piece</span>
-		<span class="n">r</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummyboard</span><span class="o">.</span><span class="n">T</span><span class="p">(</span><span class="n">Action</span><span class="o">.</span><span class="n">SPACE</span><span class="p">)</span>
+		<span class="n">r</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">dummyInterface</span><span class="o">.</span><span class="n">perform_action</span><span class="p">(</span><span class="n">Action</span><span class="o">.</span><span class="n">SPACE</span><span class="p">)</span>
 		<span class="n">Sprime</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dummyboard</span><span class="o">.</span><span class="n">table</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
 		<span class="n">V</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">heuristic_V</span><span class="p">(</span><span class="n">Sprime</span><span class="p">)</span> <span class="o">+</span> <span class="n">r</span>
 
 		<span class="c1">#3. backup</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">dummyboard</span><span class="o">.</span><span class="n">setS</span><span class="p">(</span><span class="n">before</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dummyInterface</span><span class="o">.</span><span class="n">setS</span><span class="p">(</span><span class="n">before</span><span class="p">)</span>
 
 		<span class="n">Qs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">minf</span><span class="p">]</span> <span class="o">*</span> <span class="mi">5</span>
-		<span class="n">uAseqs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">5</span>
+		<span class="n">uAseqs</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">5</span>
 
 
 		<span class="c1">#4. move to child</span>
 		<span class="k">for</span> <span class="n">mA</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">avail_actions</span><span class="p">(</span><span class="n">eff_rot</span><span class="p">):</span>
-			<span class="n">r</span><span class="p">,</span> <span class="n">wasValid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummyboard</span><span class="o">.</span><span class="n">T</span><span class="p">(</span><span class="n">mA</span><span class="p">)</span>
+			<span class="n">r</span><span class="p">,</span> <span class="n">wasValid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummyInterface</span><span class="o">.</span><span class="n">perform_action</span><span class="p">(</span><span class="n">mA</span><span class="p">)</span>
 			<span class="k">if</span> <span class="n">wasValid</span><span class="p">:</span>
 				<span class="n">ptr</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">mov_child</span><span class="p">(</span><span class="n">mA</span><span class="p">)</span>					
 				<span class="n">Qsum2</span><span class="p">,</span> <span class="n">uAseq2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span> <span class="n">eff_rot</span><span class="p">)</span>
 				<span class="n">Qs</span><span class="p">[</span><span class="n">mA</span><span class="p">]</span> <span class="o">=</span> <span class="n">Qsum2</span> <span class="o">+</span> <span class="n">r</span>
 				<span class="n">uAseqs</span><span class="p">[</span><span class="n">mA</span><span class="p">]</span> <span class="o">=</span> <span class="n">uAseq2</span>
 
-			<span class="bp">self</span><span class="o">.</span><span class="n">dummyboard</span><span class="o">.</span><span class="n">setS</span><span class="p">(</span><span class="n">before</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">dummyInterface</span><span class="o">.</span><span class="n">setS</span><span class="p">(</span><span class="n">before</span><span class="p">)</span>
 		
 		<span class="n">max_mA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Qs</span><span class="p">)</span>
 			
 		<span class="k">if</span> <span class="n">Qs</span><span class="p">[</span><span class="n">max_mA</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">V</span><span class="p">:</span>
 			<span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="p">[]</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="k">return</span> <span class="n">Qs</span><span class="p">[</span><span class="n">max_mA</span><span class="p">],</span> <span class="p">[</span><span class="n">max_mA</span><span class="p">]</span> <span class="o">+</span> <span class="n">uAseqs</span><span class="p">[</span><span class="n">max_mA</span><span class="p">]</span>
-</pre></div></div></div>
+			<span class="k">return</span> <span class="n">Qs</span><span class="p">[</span><span class="n">max_mA</span><span class="p">],</span> <span class="p">[</span><span class="n">max_mA</span><span class="p">]</span> <span class="o">+</span> <span class="n">uAseqs</span><span class="p">[</span><span class="n">max_mA</span><span class="p">]</span></div></div>
+
+</pre></div>
 
           </div>
         </div>
@@ -432,14 +739,11 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -455,13 +759,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">Tetris  documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Tetris  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2016, Author.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2016, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
     </div>
   </body>
 </html>

@@ -2,11 +2,11 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tetris.mods.Interfaces.RLInterface &mdash; Tetris  documentation</title>
+    <title>Tetris.mods.Interfaces.RLInterface &#8212; Tetris  documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -36,8 +36,8 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">Tetris  documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Tetris  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -47,329 +47,819 @@
           <div class="body" role="main">
             
   <h1>Source code for Tetris.mods.Interfaces.RLInterface</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">_pickle</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="nb">reduce</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">reduce</span>
 
-<span class="kn">from</span> <span class="nn">.BoardInterface</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.BoardInterface</span> <span class="k">import</span> <span class="o">*</span>
 
-<span class="kn">from</span> <span class="nn">..Board</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">..Authen</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">..Board</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">..Authen</span> <span class="k">import</span> <span class="o">*</span>
 
-<span class="kn">from</span> <span class="nn">theano</span> <span class="kn">import</span> <span class="n">function</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">shared</span>
-<span class="kn">import</span> <span class="nn">theano.tensor</span> <span class="kn">as</span> <span class="nn">T</span>
+<span class="kn">from</span> <span class="nn">theano</span> <span class="k">import</span> <span class="n">function</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">shared</span>
+<span class="kn">import</span> <span class="nn">theano.tensor</span> <span class="k">as</span> <span class="nn">T</span>
 
+<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="k">import</span> <span class="n">Input</span>
 	
 <div class="viewcode-block" id="PGInterface"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.PGInterface">[docs]</a><span class="k">class</span> <span class="nc">PGInterface</span><span class="p">(</span><span class="n">BoardInterface</span><span class="p">):</span>
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:class:`PGInterface` is an interface that can run policy gradient algorithms. \</span>
+<span class="sd">	It runs several policy gradient algorithms on its :attr:`machine`.</span>
+
+<span class="sd">	:param machine: machine to play and be trained</span>
+<span class="sd">	:type machine: :class:`Tetris.mods.Machine.Machine`</span>
+<span class="sd">	:param str pgmode: type of Policy Gradient algorithms. &#39;vanilla&#39;, &#39;pgt&#39;, \</span>
+<span class="sd">	and &#39;actorcritic&#39; are available.</span>
+<span class="sd">	:param float lr: learning rate</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">pgmode</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">machine</span><span class="o">=</span><span class="n">machine</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 		<span class="c1">#settings</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;pgmode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pgmode</span> <span class="c1">#pgmode &#39;vanilla&#39;, &#39;pgt&#39;, &#39;actorcritic&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;PGInterface(</span><span class="si">%s</span><span class="s1">)&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">pgmode</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;collect_traj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>	
 
 		<span class="c1">#parameters</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">previous_R</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="o">=</span><span class="mi">0</span>
-		
+		<span class="bp">self</span><span class="o">.</span><span class="n">Gs</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="sd">&quot;&quot;&quot;Hisotry of Return throughout training.&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Hs</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="sd">&quot;&quot;&quot;Hisotry of horizon length throughout training.&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">learn</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="sd">&quot;&quot;&quot;Learning function. Learns by calling :attr:`train_core`.&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">train_core</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="sd">&quot;&quot;&quot;Core training theano function.&quot;&quot;&quot;</span>
+
+		<span class="c1">#build trainer</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;pgmode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;vanilla&#39;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">build_trainer_vanilla</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;pgmode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;pgt&#39;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">build_trainer_pgt</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;pgmode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;actorcritic&#39;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">build_trainer_actorcritic</span><span class="p">()</span>
+
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Interface ready.&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PGInterface.build_trainer_vanilla"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.PGInterface.build_trainer_vanilla">[docs]</a>	<span class="k">def</span> <span class="nf">build_trainer_vanilla</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`build_trainer_vanilla` compiles a :attr:`train_core` theano function which implements \</span>
+<span class="sd">		**Vanilla Policy Gradient algorithm**, and algorithm-specific :attr:`learn` function.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
 		<span class="c1">#gradient estimator</span>
 		<span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">params</span>
-		<span class="n">Xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">s</span> <span class="c1"># (H, 2, 22, 10)</span>
-		<span class="n">As</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ivector</span><span class="p">(</span><span class="s1">&#39;As&#39;</span><span class="p">)</span>
-		<span class="n">Rs</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="s1">&#39;Rs&#39;</span><span class="p">)</span>
-		<span class="n">b</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
-		<span class="n">lr</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span><span class="s1">&#39;lr&#39;</span><span class="p">)</span>
-		<span class="n">pi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">pi</span> <span class="c1"># pi(X ; params) Shape (None,5)</span>
+		<span class="n">Ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">S</span>		<span class="c1"># (H, 2, h, w)</span>
+		<span class="n">pi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">pi</span>	<span class="c1"># (H, 5)</span>
+		<span class="n">As</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ivector</span><span class="p">(</span><span class="s1">&#39;As&#39;</span><span class="p">)</span>	<span class="c1"># (H,)</span>
+		<span class="n">Rs</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="s1">&#39;Rs&#39;</span><span class="p">)</span>		<span class="c1"># (H,)</span>
+		<span class="n">b</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>		<span class="c1"># scalar</span>
+		<span class="n">index</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">iscalar</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
 		
-		<span class="bp">self</span><span class="o">.</span><span class="n">Xs_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">))</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">lr_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">b_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>
+		<span class="c1">#update formula</span>
+		<span class="n">resp_R</span> <span class="o">=</span> <span class="n">Rs</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">-</span><span class="n">b</span>
+		<span class="n">log_pi</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">Pi</span> <span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Pi</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">a</span><span class="p">]),</span> \
+			<span class="n">sequences</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">As</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">As</span><span class="p">],</span> <span class="n">non_sequences</span><span class="o">=</span><span class="n">pi</span><span class="p">)</span>
+		<span class="n">sum_log_pi</span> <span class="o">=</span> <span class="n">log_pi</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+		<span class="n">gradients</span> <span class="o">=</span> <span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">sum_log_pi</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span> <span class="o">*</span> <span class="n">resp_R</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
+		<span class="n">updates</span> <span class="o">=</span> <span class="p">[(</span><span class="n">param</span><span class="p">,</span> <span class="n">param</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">del_param</span><span class="p">)</span> \
+			<span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">del_param</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">gradients</span><span class="p">)]</span>
+
+		<span class="c1">#shared variables.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>				<span class="c1"># (H, 2, h, w)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">))</span>						<span class="c1"># (H, )</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>					<span class="c1"># (H, )</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">b_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>						<span class="c1"># scalar</span>
 		
-		<span class="n">rightsum</span> <span class="o">=</span> <span class="n">Rs</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="n">b</span>
-		
-		<span class="n">log_pi</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">,</span><span class="n">a</span> <span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">a</span><span class="p">]),</span> <span class="n">sequences</span><span class="o">=</span><span class="p">[</span><span class="n">pi</span><span class="p">,</span> <span class="n">As</span><span class="p">])</span>
-		<span class="n">log_pi_sum</span> <span class="o">=</span> <span class="n">log_pi</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-		<span class="n">del_params</span> <span class="o">=</span> <span class="p">[</span><span class="n">rightsum</span> <span class="o">*</span> <span class="n">T</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">log_pi_sum</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
-		<span class="n">updates</span> <span class="o">=</span> <span class="p">[(</span><span class="n">param</span><span class="p">,</span> <span class="n">param</span> <span class="o">+</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">del_param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">del_param</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">del_params</span><span class="p">)]</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">train</span> <span class="o">=</span> <span class="n">function</span><span class="p">([],</span> <span class="p">[],</span>
+		<span class="c1">#index as input + shared data =&gt; transfer only index when batch is many</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">train_core</span> <span class="o">=</span> <span class="n">function</span><span class="p">([</span><span class="n">index</span><span class="p">],</span> <span class="p">[],</span>
 			<span class="n">updates</span><span class="o">=</span><span class="n">updates</span><span class="p">,</span>
 			<span class="n">givens</span><span class="o">=</span><span class="p">[</span>
-			<span class="p">(</span><span class="n">Xs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Xs_shared</span><span class="p">),</span>
-			<span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="p">),</span>
-			<span class="p">(</span><span class="n">Rs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="p">),</span>
-			<span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b_shared</span><span class="p">),</span>
-			<span class="p">(</span><span class="n">lr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr_shared</span><span class="p">)</span>
+			<span class="p">(</span><span class="n">Ss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+			<span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+			<span class="p">(</span><span class="n">Rs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+			<span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b_shared</span><span class="p">)</span>
 			<span class="p">])</span>
-		<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Interface ready.&#39;</span><span class="p">)</span>
+
+		<span class="k">def</span> <span class="nf">learn</span><span class="p">():</span>
+			<span class="n">Rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">H</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+			<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_G</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">Ss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">As</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Ss</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">As</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">b_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>		
 		
-<div class="viewcode-block" id="PGInterface.initialize"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.PGInterface.initialize">[docs]</a>	<span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">experiences</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="o">=</span><span class="mi">0</span>
-		</div>
-	<span class="k">def</span> <span class="nf">_learn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="n">Rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiences</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
-		<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_R</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
-		<span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span><span class="o">==</span><span class="n">b</span><span class="p">:</span>
-			<span class="k">return</span>
-		<span class="n">Xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiences</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
-		<span class="n">As</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiences</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">H</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)):</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">train_core</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">learn</span> <span class="o">=</span> <span class="n">learn</span></div>
+
+<div class="viewcode-block" id="PGInterface.build_trainer_pgt"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.PGInterface.build_trainer_pgt">[docs]</a>	<span class="k">def</span> <span class="nf">build_trainer_pgt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`build_trainer_pgt` compiles a :attr:`train_core` theano function which implements \</span>
+<span class="sd">		**PGT Policy Gradient algorithm**, and algorithm-specific :attr:`learn` function.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1">#gradient estimator</span>
+		<span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">params</span>
+		<span class="n">Ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">S</span>		<span class="c1"># (H, 2, h, w)</span>
+		<span class="n">pi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">pi</span>	<span class="c1"># (H, 5)</span>
+		<span class="n">As</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ivector</span><span class="p">(</span><span class="s1">&#39;As&#39;</span><span class="p">)</span>	<span class="c1"># (H,)</span>
+		<span class="n">Rs</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="s1">&#39;Rs&#39;</span><span class="p">)</span>		<span class="c1"># (H,)</span>
+		<span class="n">index</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">iscalar</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
 		
+		<span class="c1">#update formula</span>
+		<span class="n">resp_Rs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">Rs</span> <span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Rs</span><span class="p">[</span><span class="n">t</span><span class="p">:]),</span> 
+			<span class="n">sequences</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">Rs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">non_sequences</span><span class="o">=</span><span class="n">Rs</span><span class="p">)</span>
+		<span class="n">log_pi</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">resp_R</span><span class="p">,</span> <span class="n">Pi</span> <span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Pi</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">a</span><span class="p">])</span> <span class="o">*</span> <span class="n">resp_R</span><span class="p">,</span> \
+			<span class="n">sequences</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">As</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">As</span><span class="p">,</span> <span class="n">resp_Rs</span><span class="p">],</span> <span class="n">non_sequences</span><span class="o">=</span><span class="n">pi</span><span class="p">)</span>
+		<span class="n">sum_log_pi</span> <span class="o">=</span> <span class="n">log_pi</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+		<span class="n">objective</span> <span class="o">=</span> <span class="n">sum_log_pi</span>
+
+		<span class="c1">#weight regularizer</span>
+		<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+			<span class="n">objective</span> <span class="o">-=</span> <span class="mf">0.0000001</span> <span class="o">*</span> <span class="n">T</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+
+		<span class="n">gradients</span> <span class="o">=</span> <span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">objective</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
+		<span class="n">updates</span> <span class="o">=</span> <span class="p">[(</span><span class="n">param</span><span class="p">,</span> <span class="n">param</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">del_param</span><span class="p">)</span> \
+			<span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">del_param</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">gradients</span><span class="p">)]</span>
+
+		<span class="c1">#shared variables.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>				<span class="c1"># (H, 2, h, w)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">))</span>						<span class="c1"># (H, )</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>					<span class="c1"># (H, )</span>
 		
-		<span class="bp">self</span><span class="o">.</span><span class="n">Xs_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Xs</span><span class="p">)</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">As</span><span class="p">)</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">b_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+		<span class="c1">#index as input + shared data =&gt; transfer only index when batch is many</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">train_core</span> <span class="o">=</span> <span class="n">function</span><span class="p">([</span><span class="n">index</span><span class="p">],</span> <span class="p">[],</span>
+			<span class="n">updates</span><span class="o">=</span><span class="n">updates</span><span class="p">,</span>
+			<span class="n">givens</span><span class="o">=</span><span class="p">[</span>
+			<span class="p">(</span><span class="n">Ss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+			<span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+			<span class="p">(</span><span class="n">Rs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">])</span>
+			<span class="p">])</span>
+
+		<span class="k">def</span> <span class="nf">learn</span><span class="p">():</span>
+			<span class="n">Rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">H</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+			<span class="n">Ss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">As</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Ss</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">As</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
 		
-		<span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>		
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">H</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)):</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">train_core</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">learn</span> <span class="o">=</span> <span class="n">learn</span></div>
+
+<div class="viewcode-block" id="PGInterface.build_trainer_actorcritic"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.PGInterface.build_trainer_actorcritic">[docs]</a>	<span class="k">def</span> <span class="nf">build_trainer_actorcritic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		**NOT IMPLEMENTED**</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1">#first, use MC!!</span>
+
+		<span class="c1">#gradient estimator</span>
+		<span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">params</span>
+		<span class="n">criticparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">criticparams</span>
+		<span class="n">Ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">S</span>		<span class="c1"># (H, 2, h, w)</span>
+		<span class="n">pi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">pi</span>	<span class="c1"># (H, 5)</span>
+		<span class="n">Vs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">V</span>		<span class="c1"># (H, 1)</span>
+		<span class="n">As</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ivector</span><span class="p">(</span><span class="s1">&#39;As&#39;</span><span class="p">)</span>	<span class="c1"># (H,)</span>
+		<span class="n">Rs</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="s1">&#39;Rs&#39;</span><span class="p">)</span>		<span class="c1"># (H,)</span>
+		<span class="n">index</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">iscalar</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+		
+		<span class="c1">#update formula</span>
+		<span class="n">resp_Rs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">Rs</span> <span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Rs</span><span class="p">[</span><span class="n">t</span><span class="p">:]),</span> 
+			<span class="n">sequences</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">Rs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">non_sequences</span><span class="o">=</span><span class="n">Rs</span><span class="p">)</span>
+		<span class="n">log_pi</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">resp_R</span><span class="p">,</span> <span class="n">Pi</span> <span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Pi</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">a</span><span class="p">])</span> <span class="o">*</span> <span class="n">resp_R</span><span class="p">,</span> \
+			<span class="n">sequences</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">As</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">As</span><span class="p">,</span> <span class="n">resp_Rs</span><span class="p">],</span> <span class="n">non_sequences</span><span class="o">=</span><span class="n">pi</span><span class="p">)</span>
+		<span class="n">sum_log_pi</span> <span class="o">=</span> <span class="n">log_pi</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+		<span class="n">objective</span> <span class="o">=</span> <span class="n">sum_log_pi</span>
+
+		<span class="c1">#add Vs learning formula!!</span>
+
+
+		<span class="c1">#weight regularizer</span>
+		<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+			<span class="n">objective</span> <span class="o">-=</span> <span class="mf">0.0000001</span> <span class="o">*</span> <span class="n">T</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+
+		<span class="n">gradients</span> <span class="o">=</span> <span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">objective</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
+		<span class="n">updates</span> <span class="o">=</span> <span class="p">[(</span><span class="n">param</span><span class="p">,</span> <span class="n">param</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">del_param</span><span class="p">)</span> \
+			<span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">del_param</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">gradients</span><span class="p">)]</span>
+
+		<span class="c1">#shared variables.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>				<span class="c1"># (H, 2, h, w)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">))</span>						<span class="c1"># (H, )</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>					<span class="c1"># (H, )</span>
+		
+		<span class="c1">#index as input + shared data =&gt; transfer only index when batch is many</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">train_core</span> <span class="o">=</span> <span class="n">function</span><span class="p">([</span><span class="n">index</span><span class="p">],</span> <span class="p">[],</span>
+			<span class="n">updates</span><span class="o">=</span><span class="n">updates</span><span class="p">,</span>
+			<span class="n">givens</span><span class="o">=</span><span class="p">[</span>
+			<span class="p">(</span><span class="n">Ss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+			<span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+			<span class="p">(</span><span class="n">Rs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">])</span>
+			<span class="p">])</span>
+
+		<span class="k">def</span> <span class="nf">learn</span><span class="p">():</span>
+			<span class="n">Rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">H</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+			<span class="n">Ss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">As</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Ss</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">As</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+		
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">H</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)):</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">train_core</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">learn</span> <span class="o">=</span> <span class="n">learn</span></div>
+
+<div class="viewcode-block" id="PGInterface.train"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.PGInterface.train">[docs]</a>	<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`train` is a top-level train function. \</span>
+<span class="sd">		Repeatedly calls :meth:`start` to produce trajectories and learn.</span>
+
+<span class="sd">		Every 100 episode, it saves history and model weights.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">historyname</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%i</span><span class="s1">x</span><span class="si">%i</span><span class="s1">.pkl&#39;</span><span class="o">%</span> \
+		<span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">historyname</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+				<span class="n">history</span> <span class="o">=</span> <span class="n">_pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="c1"># G for return, and H for horizon</span>
+			<span class="n">history</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;G&#39;</span> <span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;H&#39;</span> <span class="p">:</span> <span class="p">[]}</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">Gs</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="s1">&#39;G&#39;</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Hs</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">]</span>
+
+		<span class="n">episode_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;G&#39;</span><span class="p">])</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Start Policy Gradient.&#39;</span><span class="p">)</span>
+		<span class="n">firsttime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+		<span class="n">starttime</span> <span class="o">=</span> <span class="n">firsttime</span>
+		<span class="n">Gs_100</span><span class="p">,</span> <span class="n">Hs_100</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+				<span class="n">G</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">Gs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">Hs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+
+				<span class="n">Gs_100</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+				<span class="n">Hs_100</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+
+				<span class="n">episode_num</span> <span class="o">+=</span> <span class="mi">1</span>
+
+				<span class="k">if</span> <span class="n">episode_num</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="n">nowtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+					<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Episode #</span><span class="si">%i</span><span class="s1">. Mean G : </span><span class="si">%.2f</span><span class="s1">(</span><span class="si">%.2f</span><span class="s1">/</span><span class="si">%.2f</span><span class="s1">), Mean ticks : </span><span class="si">%.2f</span><span class="s1">(</span><span class="si">%i</span><span class="s1">/</span><span class="si">%i</span><span class="s1">). Took </span><span class="si">%.1f</span><span class="s1">s, elapsed </span><span class="si">%.1f</span><span class="s1">s&#39;</span>\
+						<span class="o">%</span><span class="p">(</span><span class="n">episode_num</span><span class="p">,</span> \
+						<span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Gs_100</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">Gs_100</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Gs_100</span><span class="p">),</span> \
+						<span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Hs_100</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">Hs_100</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Hs_100</span><span class="p">),</span> \
+						<span class="n">nowtime</span><span class="o">-</span><span class="n">starttime</span><span class="p">,</span> <span class="n">nowtime</span><span class="o">-</span><span class="n">firsttime</span><span class="p">))</span>
+
+					<span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">save_weights</span><span class="p">()</span>
+					<span class="n">starttime</span> <span class="o">=</span> <span class="n">nowtime</span>
+					<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">historyname</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+						<span class="n">_pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+					<span class="n">Gs_100</span><span class="p">,</span> <span class="n">Hs_100</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+		<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+			<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">historyname</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+				<span class="n">_pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
 		
 <div class="viewcode-block" id="PGInterface.start"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.PGInterface.start">[docs]</a>	<span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`start` runs one episode and produces one trajectory.</span>
+
+<span class="sd">		After each episode is done, it calls :attr:`learn` function to learn.</span>
+
+<span class="sd">		:returns (G, H): (Return, Horizon)</span>
+<span class="sd">		:rtype: (float, int)</span>
+<span class="sd">		&quot;&quot;&quot;</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">isStarted</span><span class="o">=</span><span class="kc">True</span>
 
-		<span class="bp">self</span><span class="o">.</span><span class="n">isStarted</span><span class="o">=</span><span class="bp">True</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">S0</span><span class="p">()</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">nextpiece</span><span class="p">()</span>
 		<span class="n">startTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-
-		<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-			<span class="c1">#feedforward</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">OnTimer</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
-			<span class="c1">#check if it&#39;s over</span>
+		<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isOver</span><span class="p">:</span>
 				<span class="k">break</span>
+
 		<span class="n">endTime</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">G</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-			<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Game over. Score : </span><span class="si">%i</span><span class="s1">, Ticks : </span><span class="si">%i</span><span class="s1">, Time elapsed : </span><span class="si">%.1f</span><span class="s1">s&#39;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numLinesRemoved</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">endTime</span><span class="o">-</span><span class="n">startTime</span><span class="p">))</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">previous_R</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
-		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_R</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">previous_R</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_R</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">_learn</span><span class="p">()</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">learn</span><span class="p">()</span>
 		<span class="n">learn_endTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>	
-		<span class="c1">#print(&#39;Learned. Time elapsed : %.1fs&#39;%(learn_endTime-endTime))</span>
-		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">t</span>
-</div></div>
-<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">class DQNRLInterface(RLInterface):</span>
-<span class="sd">	def __init__(self, name, machine):</span>
-<span class="sd">		super().__init__()</span>
-<span class="sd">		self.machine = machine</span>
-<span class="sd">		</span>
-<span class="sd">	def OnTick(self):</span>
-<span class="sd">		#choose e-greedy action!		</span>
-<span class="sd">		use_random = np.random.binomial(1, self.ep, 1)[0]	</span>
-<span class="sd">		if use_random:</span>
-<span class="sd">			pi = [0,0,0,0,0]</span>
-<span class="sd">			pi[np.random.randint(5)] = 1</span>
-<span class="sd">		else:</span>
-<span class="sd">			pi = self.machine.Pi(self.board.S())</span>
-<span class="sd">		</span>
-<span class="sd">		if pi is not None:</span>
-<span class="sd">			self.perform_action(np.random.choice(5, p=pi))</span>
-<span class="sd">		</span>
-<span class="sd">	def perform_action(self, action):</span>
-<span class="sd">		self.actionhistory.append((self.board.t, action))</span>
 
-<span class="sd">		s = self.board.phi()</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">t</span></div></div>
 
-<span class="sd">		def action2A(self, action):</span>
-<span class="sd">			result = [0, 0, 0, 0, 0]</span>
-<span class="sd">			result[action] = 1</span>
-<span class="sd">			return result</span>
+<div class="viewcode-block" id="ValueRLInterface"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.ValueRLInterface">[docs]</a><span class="k">class</span> <span class="nc">ValueRLInterface</span><span class="p">(</span><span class="n">BoardInterface</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:class:`ValueRLInterface` is an interface that can run value-based learning algorithsm. \</span>
+<span class="sd">	It runs several learning algorithms on its :attr:`machine`.</span>
 
-<span class="sd">		a = action2A(self, action)</span>
-<span class="sd">		r = self.board.T(action)</span>
-<span class="sd">		sprime = self.board.phi()</span>
+<span class="sd">	Value-Based learning algorithms are all basically forcing Bellman Equation on visited states.\</span>
+<span class="sd">	Available training algorithms are:</span>
 
-<span class="sd">		e = (s,a,r,sprime)</span>
+<span class="sd">	1. **DQN**</span>
+<span class="sd">	2. **Q-Learning**</span>
+<span class="sd">	3. **SARSA**</span>
+<span class="sd">	4. **Expected-SARSA**</span>
 
-<span class="sd">		self._add_E(e)</span>
+<span class="sd">	:param machine: machine to play and be trained</span>
+<span class="sd">	:type machine: :class:`Tetris.mods.Machine.Machine`</span>
+<span class="sd">	:param str rlmode: type of learning algorithms. \</span>
+<span class="sd">	&#39;q-learning&#39;, &#39;dqn&#39;, &#39;double-dqn&#39;, &#39;sarsa&#39;, and &#39;expected-sarsa&#39; are available.</span>
+<span class="sd">	:param float lr: learning rate</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">rlmode</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">machine</span><span class="o">=</span><span class="n">machine</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="sd">	def _learn(self):</span>
-<span class="sd">		# Es = [e1,e2,e3,...,]</span>
-<span class="sd">		# e = (s,a,r,s&#39;)</span>
-<span class="sd">		Es = self._pick_Es(self.train_batch)</span>
-<span class="sd">		Ss = np.array([E[0] for E in Es])</span>
-<span class="sd">		As = np.array([E[1] for E in Es])</span>
-<span class="sd">		Rs = np.array([E[2] for E in Es])</span>
-<span class="sd">		Sps = np.array([E[3] for E in Es])</span>
-<span class="sd">		</span>
-<span class="sd">		#we have an issue here.</span>
-<span class="sd">		#the model is function approximator of Q function.</span>
-<span class="sd">		#f -&gt; [-inf, inf]</span>
-<span class="sd">		#currently, f -&gt; [0,1]</span>
-<span class="sd">		</span>
-<span class="sd">		#1. get Q</span>
-<span class="sd">		Qs = self.machine.model.predict(</span>
-<span class="sd">			Ss,</span>
-<span class="sd">			verbose=0,</span>
-<span class="sd">			batch_size=self.train_batch)</span>
+		<span class="c1">#settings</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;rlmode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rlmode</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;RLInterface(</span><span class="si">%s</span><span class="s1">)&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">rlmode</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;collect_traj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;refresh_traj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 
-<span class="sd">		#2. get max Q(s&#39;,a&#39;)</span>
-<span class="sd">		Q_of_sp_aps = self.machine.model.predict(</span>
-<span class="sd">			Sps,</span>
-<span class="sd">			verbose=0,</span>
-<span class="sd">			batch_size=self.train_batch)			</span>
-<span class="sd">		maxQ_of_sps = np.max(Q_of_sp_aps, axis=1)</span>
-<span class="sd">		</span>
-<span class="sd">		#3. set target_Q		</span>
-<span class="sd">		target_Qs = Qs.copy()</span>
-<span class="sd">		actions = np.nonzero(As)		</span>
-<span class="sd">		target_Qs[actions] = Rs + self.gamma * maxQ_of_sps</span>
-<span class="sd">					</span>
-<span class="sd">		self.machine.model.fit(</span>
-<span class="sd">			Ss, target_Qs,</span>
-<span class="sd">			nb_epoch = 1,</span>
-<span class="sd">			verbose=0,</span>
-<span class="sd">			batch_size=self.train_batch,</span>
-<span class="sd">			shuffle=True)</span>
-<span class="sd">			</span>
-<span class="sd">		#4. print</span>
-<span class="sd">		#new_Qs = self.machine.model.predict(</span>
-<span class="sd">		#	Ss,</span>
-<span class="sd">		#	verbose=0,</span>
-<span class="sd">		#	batch_size=self.train_batch)</span>
-<span class="sd">			</span>
-<span class="sd">		#for a,b,c in zip(Qs.flatten(), target_Qs.flatten(), new_Qs.flatten()):</span>
-<span class="sd">		#	print(a, b, c)</span>
-<span class="sd">		#a=input(&quot;go&quot;)</span>
-<span class="sd">		</span>
-<span class="sd">		#print(&#39;learned&#39;)</span>
+		<span class="c1">#parameters</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Gs</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="sd">&quot;&quot;&quot;Hisotry of Return throughout training.&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Hs</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="sd">&quot;&quot;&quot;Hisotry of horizon length throughout training.&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Costs</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="sd">&quot;&quot;&quot;Hisotry of Value-Approximation costs throughout training.&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">learn</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="sd">&quot;&quot;&quot;Learning function. Learns by calling :attr:`train_core`.&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">train_core</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="sd">&quot;&quot;&quot;Core training theano function.&quot;&quot;&quot;</span>
 
-<span class="sd">	def start(self):</span>
-<span class="sd">		self.initialize()</span>
+		<span class="c1">#build trainer</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;rlmode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;q-learning&#39;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">build_trainer_qlearning</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;rlmode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;dqn&#39;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">build_trainer_dqn</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;rlmode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;double-dqn&#39;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">build_trainer_doubledqn</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;rlmode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;sarsa&#39;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">build_trainer_sarsa</span><span class="p">()</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;rlmode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;expected-sarsa&#39;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">build_trainer_expectedsarsa</span><span class="p">()</span>
 
-<span class="sd">		self.isStarted=True</span>
-<span class="sd">		self.board.S0()</span>
-<span class="sd">		self.board.nextpiece()</span>
-<span class="sd">		startTime = time.time()</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Interface ready.&#39;</span><span class="p">)</span>
 
-<span class="sd">		while True:</span>
-<span class="sd">			self.exp_count+=1</span>
+	<span class="k">def</span> <span class="nf">_get_another_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+		<span class="n">tmp</span> <span class="o">=</span> <span class="nb">input</span>
+		<span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+			<span class="n">tmp</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">tmp</span>
 
-<span class="sd">			#feedforward</span>
-<span class="sd">			self.OnTimer(None)			</span>
+	<span class="k">def</span> <span class="nf">_backup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">approxs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+		<span class="n">cost</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">approxs</span> <span class="o">-</span> <span class="n">targets</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
-<span class="sd">			#check if it&#39;s over</span>
-<span class="sd">			if self.isOver:</span>
-<span class="sd">				break</span>
+		<span class="n">gradients</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+		<span class="n">updates</span> <span class="o">=</span> <span class="p">[(</span><span class="n">param</span><span class="p">,</span> <span class="n">param</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">g</span><span class="p">)</span> \
+			<span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">gradients</span><span class="p">)]</span>
 
-<span class="sd">			#learn</span>
-<span class="sd">			if self.exp_count % self.train_interval == 0:</span>
-<span class="sd">				self._learn()</span>
+		<span class="k">return</span> <span class="n">cost</span><span class="p">,</span> <span class="n">updates</span>
 
-<span class="sd">		self.machine.save_weights()</span>
-<span class="sd">		endTime=time.time()</span>
-<span class="sd">		print(&#39;Game over. Score : %i, Ticks : %i, Time elapsed : %.3f&#39;%(self.numLinesRemoved, self.board.t, endTime-startTime))</span>
-<span class="sd">		return self.numLinesRemoved, self.board.t</span>
-<span class="sd">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span>
+<div class="viewcode-block" id="ValueRLInterface.build_trainer_dqn"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_dqn">[docs]</a>	<span class="k">def</span> <span class="nf">build_trainer_dqn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`build_trainer_dqn` compiles a :attr:`train_core` theano function which implements \</span>
+<span class="sd">		**DQN**, and algorithm-specific :attr:`learn` function.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">params</span>
+		<span class="n">index</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">iscalar</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+		<span class="n">Ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">S</span>			<span class="c1"># (H, 2, h, w)</span>
+		<span class="n">As</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ivector</span><span class="p">(</span><span class="s1">&#39;As&#39;</span><span class="p">)</span>		<span class="c1"># (H,)</span>
+		<span class="n">Rs</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="s1">&#39;Rs&#39;</span><span class="p">)</span>			<span class="c1"># (H,)</span>
+		<span class="n">Qsof_S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">P</span>
 
-<span class="sd">class PGInterface(RLInterface):</span>
-<span class="sd">	def __init__(self, name, machine):</span>
-<span class="sd">		super().__init__(maxTick=10000)</span>
-<span class="sd">		self.name = &#39;PGBoard&#39;</span>
-<span class="sd">		self.machine = machine</span>
-<span class="sd">		self.lr = 0.0001</span>
-<span class="sd">		self.previous_R = []</span>
-<span class="sd">		self.G=0</span>
-<span class="sd">		</span>
-<span class="sd">		params = self.machine.params</span>
-<span class="sd">		Xs = self.machine.s # (H, 2, 22, 10)</span>
-<span class="sd">		As = T.ivector(&#39;As&#39;)</span>
-<span class="sd">		Rs = T.vector(&#39;Rs&#39;)</span>
-<span class="sd">		b = T.scalar(&#39;b&#39;)</span>
-<span class="sd">		lr = T.scalar(&#39;lr&#39;)</span>
-<span class="sd">		pi = self.machine.pi # pi(X ; params) Shape (None,5)</span>
-<span class="sd">		</span>
-<span class="sd">		self.Xs_shared = shared(np.zeros((0,0,0,0), dtype=&#39;float32&#39;))</span>
-<span class="sd">		self.As_shared = shared(np.zeros((0,), dtype=&#39;int32&#39;))</span>
-<span class="sd">		self.Rs_shared = shared(np.zeros((0,), dtype=&#39;float32&#39;))</span>
-<span class="sd">		self.lr_shared = shared(np.array(self.lr , dtype=&#39;float32&#39;))</span>
-<span class="sd">		self.b_shared = shared(np.array(0., dtype=&#39;float32&#39;))</span>
-<span class="sd">		</span>
-<span class="sd">		rightsum = Rs.sum() - b</span>
-<span class="sd">		</span>
-<span class="sd">		log_pi, _ = scan(lambda p,a : T.log(p[a]), sequences=[pi, As])</span>
-<span class="sd">		log_pi_sum = log_pi.sum()</span>
-<span class="sd">		del_params = [rightsum * T.grad(log_pi_sum, param) for param in params]</span>
-<span class="sd">		updates = [(param, param + lr * del_param) for param, del_param in zip(params, del_params)]</span>
-<span class="sd">		self.train = function([], [],</span>
-<span class="sd">			updates=updates,</span>
-<span class="sd">			givens=[</span>
-<span class="sd">			(Xs, self.Xs_shared),</span>
-<span class="sd">			(As, self.As_shared),</span>
-<span class="sd">			(Rs, self.Rs_shared),</span>
-<span class="sd">			(b, self.b_shared),</span>
-<span class="sd">			(lr, self.lr_shared)</span>
-<span class="sd">			])</span>
-<span class="sd">		print(&#39;Interface ready.&#39;)</span>
-<span class="sd">		</span>
-<span class="sd">	def initialize(self):</span>
-<span class="sd">		super().initialize()</span>
-<span class="sd">		self.experiences = []</span>
-<span class="sd">		self.G=0</span>
-<span class="sd">		</span>
-<span class="sd">	def OnTick(self):</span>
-<span class="sd">		pi = self.machine.Pi(self.board.S())</span>
-<span class="sd">		#print(self.phi(self.board.S()))</span>
-<span class="sd">		#print(pi)</span>
-<span class="sd">		#input(&#39;Go?&#39;)</span>
-<span class="sd">		if pi is not None:</span>
-<span class="sd">			self.perform_action(np.random.choice(5, p=pi))</span>
-<span class="sd">		</span>
-<span class="sd">	def perform_action(self, action):</span>
-<span class="sd">		s = self.phi(self.board.S()).astype(&#39;float32&#39;)</span>
-<span class="sd">		a = action</span>
-<span class="sd">		r = self.board.T(action)</span>
-<span class="sd">		e = (s, a, r)</span>
-<span class="sd">		self.experiences.append(e)</span>
-<span class="sd">		self.G += r</span>
+		<span class="n">model2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span>
+		<span class="n">params2</span> <span class="o">=</span> <span class="n">model2</span><span class="o">.</span><span class="n">trainable_weights</span>
 
-<span class="sd">	@abstractmethod</span>
-<span class="sd">	def _learn(self):</span>
-<span class="sd">		Rs = np.array([e[2] for e in self.experiences], dtype=&#39;float32&#39;)</span>
-<span class="sd">		b = np.average(self.previous_R).astype(&#39;float32&#39;)</span>
-<span class="sd">		if np.sum(Rs)==b:</span>
-<span class="sd">			return</span>
-<span class="sd">		Xs = np.array([e[0] for e in self.experiences], dtype=&#39;float32&#39;)</span>
-<span class="sd">		As = np.array([e[1] for e in self.experiences], dtype=&#39;int32&#39;)</span>
-<span class="sd">		</span>
-<span class="sd">		</span>
-<span class="sd">		self.Xs_shared.set_value(Xs)</span>
-<span class="sd">		self.As_shared.set_value(As)</span>
-<span class="sd">		self.Rs_shared.set_value(Rs)</span>
-<span class="sd">		self.b_shared.set_value(b)</span>
-<span class="sd">		</span>
-<span class="sd">		self.train()		</span>
-<span class="sd">		</span>
-<span class="sd">	def start(self):</span>
-<span class="sd">		self.initialize()</span>
+		<span class="c1">#initialize, copy weights</span>
+		<span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">param2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">params2</span><span class="p">):</span>
+			<span class="n">param</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">param2</span><span class="o">.</span><span class="n">get_value</span><span class="p">())</span>
+		<span class="n">Sps</span> <span class="o">=</span> <span class="n">model2</span><span class="o">.</span><span class="n">get_input_at</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+		<span class="n">Qsof_Sp_Ap</span> <span class="o">=</span> <span class="n">model2</span><span class="o">.</span><span class="n">get_output_at</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-<span class="sd">		self.isStarted=True</span>
-<span class="sd">		self.board.S0()</span>
-<span class="sd">		self.board.nextpiece()</span>
-<span class="sd">		startTime = time.time()</span>
+		<span class="c1">#update formula</span>
+		<span class="n">targets</span> <span class="o">=</span> <span class="n">Rs</span> <span class="o">+</span> <span class="n">T</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Qsof_Sp_Ap</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="sd">		while True:</span>
-<span class="sd">			#feedforward</span>
-<span class="sd">			self.OnTimer(None)</span>
-<span class="sd">			#check if it&#39;s over</span>
-<span class="sd">			if self.isOver:</span>
-<span class="sd">				break</span>
-<span class="sd">		endTime=time.time()</span>
-<span class="sd">		if self.G != 0:</span>
-<span class="sd">			print(&#39;Game over. Score : %i, Ticks : %i, Time elapsed : %.1fs&#39;%(self.numLinesRemoved, self.board.t, endTime-startTime))</span>
-<span class="sd">		self.previous_R.append(self.G)</span>
-<span class="sd">		if len(self.previous_R) &gt;= 5:</span>
-<span class="sd">			self.previous_R = self.previous_R[-5:]</span>
-<span class="sd">		self._learn()</span>
-<span class="sd">		learn_endTime = time.time()	</span>
-<span class="sd">		#print(&#39;Learned. Time elapsed : %.1fs&#39;%(learn_endTime-endTime))</span>
-<span class="sd">		return self.G, self.board.t</span>
-<span class="sd">=======</span>
-<span class="sd">&#39;&#39;&#39;</span>
+		<span class="n">Qsof_S_A</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">A</span><span class="p">],</span> \
+			<span class="n">sequences</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">As</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">As</span><span class="p">],</span> \
+			<span class="n">non_sequences</span><span class="o">=</span><span class="n">Qsof_S</span><span class="p">)</span>
+
+		<span class="n">cost</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backup</span><span class="p">(</span><span class="n">Qsof_S_A</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+		<span class="c1">#shared variables.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>				<span class="c1"># (H, 2, h, w)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">))</span>						<span class="c1"># (H, )</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>					<span class="c1"># (H, )</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>				<span class="c1"># (H, 2, h, w)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">train_core</span> <span class="o">=</span> <span class="n">function</span><span class="p">([</span><span class="n">index</span><span class="p">],</span> <span class="p">[</span><span class="n">cost</span><span class="p">],</span>
+			<span class="n">updates</span><span class="o">=</span><span class="n">updates</span><span class="p">,</span>
+			<span class="n">givens</span><span class="o">=</span><span class="p">[</span>
+				<span class="p">(</span><span class="n">Ss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">Rs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">Sps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">])</span>
+			<span class="p">])</span>
+
+		<span class="k">def</span> <span class="nf">learn</span><span class="p">():</span>
+			<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Since Q-learning is off-policy, we can use all the experiences accumulated before.</span>
+<span class="sd">			&quot;&quot;&quot;</span>
+			<span class="n">replace_rate</span> <span class="o">=</span> <span class="mf">0.01</span>
+			<span class="n">N</span> <span class="o">=</span> <span class="mi">8192</span><span class="o">*</span><span class="mi">2</span>
+			<span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">replace_rate</span><span class="p">):</span>
+				<span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">param2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">params2</span><span class="p">):</span>
+					<span class="n">param</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">param2</span><span class="o">.</span><span class="n">get_value</span><span class="p">())</span>
+
+			<span class="n">Ss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">As</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+			<span class="n">Rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">Sps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+
+			<span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="n">N</span><span class="p">:</span>
+				<span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,))</span>
+				<span class="n">Ss</span> <span class="o">=</span> <span class="n">Ss</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+				<span class="n">As</span> <span class="o">=</span> <span class="n">As</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+				<span class="n">Rs</span> <span class="o">=</span> <span class="n">Rs</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+				<span class="n">Sps</span> <span class="o">=</span> <span class="n">Sps</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Ss</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">As</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Sps</span><span class="p">)</span>
+			
+			<span class="n">costs</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)):</span>
+				<span class="n">costs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_core</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">costs</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">learn</span><span class="o">=</span><span class="n">learn</span></div>
+
+<div class="viewcode-block" id="ValueRLInterface.build_trainer_qlearning"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_qlearning">[docs]</a>	<span class="k">def</span> <span class="nf">build_trainer_qlearning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`build_trainer_qlearning` compiles a :attr:`train_core` theano function which implements \</span>
+<span class="sd">		**Q-Learning**, and algorithm-specific :attr:`learn` function.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">params</span>
+		<span class="n">index</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">iscalar</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+		<span class="n">Ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">S</span>			<span class="c1"># (H, 2, h, w)</span>
+		<span class="n">As</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ivector</span><span class="p">(</span><span class="s1">&#39;As&#39;</span><span class="p">)</span>		<span class="c1"># (H,)</span>
+		<span class="n">Rs</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="s1">&#39;Rs&#39;</span><span class="p">)</span>			<span class="c1"># (H,)</span>
+		<span class="n">Qsof_S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">P</span>
+		<span class="n">Sps</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">Board</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">Board</span><span class="o">.</span><span class="n">width</span><span class="p">))</span> <span class="c1"># (H, 2, h, w)</span>
+		<span class="n">Qsof_Sp_Ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_another_output</span><span class="p">(</span><span class="n">Sps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+		<span class="c1">#update formula</span>
+		<span class="n">targets</span> <span class="o">=</span> <span class="n">Rs</span> <span class="o">+</span> <span class="n">T</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">T</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Qsof_Sp_Ap</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">T</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="mi">0</span><span class="p">)])</span>
+
+		<span class="n">Qsof_S_A</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">A</span><span class="p">],</span> \
+			<span class="n">sequences</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">As</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">As</span><span class="p">],</span> \
+			<span class="n">non_sequences</span><span class="o">=</span><span class="n">Qsof_S</span><span class="p">)</span>
+
+		<span class="n">cost</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backup</span><span class="p">(</span><span class="n">Qsof_S_A</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+		<span class="c1">#shared variables.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>				<span class="c1"># (H, 2, h, w)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">))</span>						<span class="c1"># (H, )</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>					<span class="c1"># (H, )</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>				<span class="c1"># (H, 2, h, w)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">train_core</span> <span class="o">=</span> <span class="n">function</span><span class="p">([</span><span class="n">index</span><span class="p">],</span> <span class="p">[</span><span class="n">cost</span><span class="p">],</span>
+			<span class="n">updates</span><span class="o">=</span><span class="n">updates</span><span class="p">,</span>
+			<span class="n">givens</span><span class="o">=</span><span class="p">[</span>
+				<span class="p">(</span><span class="n">Ss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">Rs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">Sps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">])</span>
+			<span class="p">])</span>
+
+		<span class="k">def</span> <span class="nf">learn</span><span class="p">():</span>
+			<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Since Q-learning is off-policy, we can use all the experiences accumulated before.</span>
+<span class="sd">			&quot;&quot;&quot;</span>
+			<span class="n">N</span> <span class="o">=</span> <span class="mi">8192</span> <span class="o">*</span> <span class="mi">2</span>
+			<span class="n">Ss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">As</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+			<span class="n">Rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">Sps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+
+			<span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="n">N</span><span class="p">:</span>
+				<span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,))</span>
+				<span class="n">Ss</span> <span class="o">=</span> <span class="n">Ss</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+				<span class="n">As</span> <span class="o">=</span> <span class="n">As</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+				<span class="n">Rs</span> <span class="o">=</span> <span class="n">Rs</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+				<span class="n">Sps</span> <span class="o">=</span> <span class="n">Sps</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Ss</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">As</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Sps</span><span class="p">)</span>
+			
+			<span class="n">costs</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)):</span>
+				<span class="n">costs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_core</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">costs</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">learn</span><span class="o">=</span><span class="n">learn</span></div>
+
+<div class="viewcode-block" id="ValueRLInterface.build_trainer_sarsa"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_sarsa">[docs]</a>	<span class="k">def</span> <span class="nf">build_trainer_sarsa</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`build_trainer_sarsa` compiles a :attr:`train_core` theano function which implements \</span>
+<span class="sd">		**SARSA**, and algorithm-specific :attr:`learn` function.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;refresh_traj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+		<span class="c1">#Since SARSA is an on-policy learning algorithm, trajectories from former pi cannot be used.</span>
+
+		<span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">params</span>
+		<span class="n">index</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">iscalar</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+		<span class="n">Ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">S</span>			<span class="c1"># (H, 2, h, w)</span>
+		<span class="n">As</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ivector</span><span class="p">(</span><span class="s1">&#39;As&#39;</span><span class="p">)</span>		<span class="c1"># (H,)</span>
+		<span class="n">Rs</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="s1">&#39;Rs&#39;</span><span class="p">)</span>			<span class="c1"># (H,)</span>
+		<span class="n">Qsof_S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">P</span>
+		<span class="n">Sps</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">Board</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">Board</span><span class="o">.</span><span class="n">width</span><span class="p">))</span> <span class="c1"># (H, 2, h, w)</span>
+		<span class="n">Qsof_Sp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_another_output</span><span class="p">(</span><span class="n">Sps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+		<span class="c1">#update formula</span>
+		<span class="c1">#Vsof_Sp = T.max(Qsof_Sp_Ap, axis=-1)</span>
+		<span class="n">Qsof_Sp_Ap</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="n">P</span><span class="p">[</span><span class="n">t</span><span class="p">,</span><span class="n">A</span><span class="p">],</span> \
+			<span class="n">sequences</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">As</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">As</span><span class="p">[</span><span class="mi">1</span><span class="p">:]],</span> \
+			<span class="n">non_sequences</span><span class="o">=</span><span class="n">Qsof_Sp</span><span class="p">)</span>
+
+		<span class="n">targets</span> <span class="o">=</span> <span class="n">Rs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">Qsof_Sp_Ap</span>
+
+		<span class="n">Qsof_S_A</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">A</span><span class="p">],</span> \
+			<span class="n">sequences</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">As</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">As</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> \
+			<span class="n">non_sequences</span><span class="o">=</span><span class="n">Qsof_S</span><span class="p">)</span>
+
+		<span class="n">cost</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="n">_backup</span><span class="p">(</span><span class="n">Qsof_S_A</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+		<span class="c1">#shared variables.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>				<span class="c1"># (H, 2, h, w)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">))</span>						<span class="c1"># (H, )</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>					<span class="c1"># (H, )</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>				<span class="c1"># (H, 2, h, w)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">train_core</span> <span class="o">=</span> <span class="n">function</span><span class="p">([</span><span class="n">index</span><span class="p">],</span> <span class="p">[</span><span class="n">cost</span><span class="p">],</span>
+			<span class="n">updates</span><span class="o">=</span><span class="n">updates</span><span class="p">,</span>
+			<span class="n">givens</span><span class="o">=</span><span class="p">[</span>
+				<span class="p">(</span><span class="n">Ss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">Rs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">Sps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">])</span>
+			<span class="p">])</span>
+
+		<span class="k">def</span> <span class="nf">learn</span><span class="p">():</span>
+			<span class="n">Ss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">As</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+			<span class="n">Rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">Sps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">H</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Ss</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">As</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Sps</span><span class="p">)</span>
+			
+			<span class="n">costs</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">H</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)):</span>
+				<span class="n">costs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_core</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">costs</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">learn</span><span class="o">=</span><span class="n">learn</span></div>
+	
+<div class="viewcode-block" id="ValueRLInterface.build_trainer_n_sarsa"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_n_sarsa">[docs]</a>	<span class="k">def</span> <span class="nf">build_trainer_n_sarsa</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`build_trainer_n_sarsa` compiles a :attr:`train_core` theano function which implements \</span>
+<span class="sd">		**n-step SARSA**, and algorithm-specific :attr:`learn` function.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;refresh_traj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+		<span class="c1">#Since SARSA is an on-policy learning algorithm, trajectories from former pi cannot be used.</span>
+
+		<span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">params</span>
+		<span class="n">index</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">iscalar</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+		<span class="n">Ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">S</span>			<span class="c1"># (H, 2, h, w)</span>
+		<span class="n">As</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ivector</span><span class="p">(</span><span class="s1">&#39;As&#39;</span><span class="p">)</span>		<span class="c1"># (H,)</span>
+		<span class="n">Rs</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="s1">&#39;Rs&#39;</span><span class="p">)</span>			<span class="c1"># (H,)</span>
+		<span class="n">Qsof_S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">P</span>
+		<span class="n">Sps</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">Board</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">Board</span><span class="o">.</span><span class="n">width</span><span class="p">))</span> <span class="c1"># (H, 2, h, w)</span>
+		<span class="n">Qsof_Sp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_another_output</span><span class="p">(</span><span class="n">Sps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+		<span class="c1">#update formula</span>
+		<span class="c1">#Vsof_Sp = T.max(Qsof_Sp_Ap, axis=-1)</span>
+		<span class="n">Qsof_Sp_Ap</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="n">P</span><span class="p">[</span><span class="n">t</span><span class="p">,</span><span class="n">A</span><span class="p">],</span> \
+			<span class="n">sequences</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">As</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">As</span><span class="p">[</span><span class="mi">1</span><span class="p">:]],</span> \
+			<span class="n">non_sequences</span><span class="o">=</span><span class="n">Qsof_Sp</span><span class="p">)</span>
+
+		<span class="n">targets</span> <span class="o">=</span> <span class="n">Rs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">Qsof_Sp_Ap</span>
+
+		<span class="n">Qsof_S_A</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">A</span><span class="p">],</span> \
+			<span class="n">sequences</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">As</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">As</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> \
+			<span class="n">non_sequences</span><span class="o">=</span><span class="n">Qsof_S</span><span class="p">)</span>
+
+		<span class="n">cost</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="n">_backup</span><span class="p">(</span><span class="n">Qsof_S_A</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+		<span class="c1">#shared variables.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>				<span class="c1"># (H, 2, h, w)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">))</span>						<span class="c1"># (H, )</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>					<span class="c1"># (H, )</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>				<span class="c1"># (H, 2, h, w)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">train_core</span> <span class="o">=</span> <span class="n">function</span><span class="p">([</span><span class="n">index</span><span class="p">],</span> <span class="p">[</span><span class="n">cost</span><span class="p">],</span>
+			<span class="n">updates</span><span class="o">=</span><span class="n">updates</span><span class="p">,</span>
+			<span class="n">givens</span><span class="o">=</span><span class="p">[</span>
+				<span class="p">(</span><span class="n">Ss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">Rs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">Sps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">])</span>
+			<span class="p">])</span>
+
+		<span class="k">def</span> <span class="nf">learn</span><span class="p">():</span>
+			<span class="n">Ss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">As</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+			<span class="n">Rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">Sps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">H</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Ss</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">As</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Sps</span><span class="p">)</span>
+			
+			<span class="n">costs</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">H</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)):</span>
+				<span class="n">costs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_core</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">costs</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">learn</span><span class="o">=</span><span class="n">learn</span></div>
+		
+<div class="viewcode-block" id="ValueRLInterface.build_trainer_expectedsarsa"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_expectedsarsa">[docs]</a>	<span class="k">def</span> <span class="nf">build_trainer_expectedsarsa</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`build_trainer_expectedsarsa` compiles a :attr:`train_core` theano function which implements \</span>
+<span class="sd">		**Expected-SARSA**, and algorithm-specific :attr:`learn` function.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;refresh_traj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+		<span class="c1">#Since SARSA is an on-policy learning algorithm, trajectories from former pi cannot be used.</span>
+
+		<span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">params</span>
+		<span class="n">index</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">iscalar</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+		<span class="n">Ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">S</span>			<span class="c1"># (H, 2, h, w)</span>
+		<span class="n">As</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">ivector</span><span class="p">(</span><span class="s1">&#39;As&#39;</span><span class="p">)</span>		<span class="c1"># (H,)</span>
+		<span class="n">Rs</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="s1">&#39;Rs&#39;</span><span class="p">)</span>			<span class="c1"># (H,)</span>
+		<span class="n">Qsof_S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">P</span>
+		<span class="n">Sps</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">Board</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">Board</span><span class="o">.</span><span class="n">width</span><span class="p">))</span> <span class="c1"># (H, 2, h, w)</span>
+
+		<span class="n">Qsof_Sp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_another_output</span><span class="p">(</span><span class="n">Sps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>		
+		<span class="n">Piof_Sp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">get_pi_from_v</span><span class="p">(</span><span class="n">Qsof_Sp</span><span class="p">)</span>
+		<span class="n">ExpectedQsof_Sp</span> <span class="o">=</span> <span class="n">Piof_Sp</span> <span class="o">*</span> <span class="n">Qsof_Sp</span>
+
+		<span class="n">targets</span> <span class="o">=</span> <span class="n">Rs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">T</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ExpectedQsof_Sp</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+		<span class="n">Qsof_S_A</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">P</span><span class="p">:</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">A</span><span class="p">],</span> \
+			<span class="n">sequences</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">As</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">As</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> \
+			<span class="n">non_sequences</span><span class="o">=</span><span class="n">Qsof_S</span><span class="p">)</span>
+		
+		<span class="n">cost</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backup</span><span class="p">(</span><span class="n">Qsof_S_A</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+		<span class="c1">#shared variables.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>				<span class="c1"># (H, 2, h, w)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">))</span>						<span class="c1"># (H, )</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>					<span class="c1"># (H, )</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span> <span class="o">=</span> <span class="n">shared</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">))</span>				<span class="c1"># (H, 2, h, w)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">train_core</span> <span class="o">=</span> <span class="n">function</span><span class="p">([</span><span class="n">index</span><span class="p">],</span> <span class="p">[</span><span class="n">cost</span><span class="p">],</span>
+			<span class="n">updates</span><span class="o">=</span><span class="n">updates</span><span class="p">,</span>
+			<span class="n">givens</span><span class="o">=</span><span class="p">[</span>
+				<span class="p">(</span><span class="n">Ss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">Rs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">]),</span>
+				<span class="p">(</span><span class="n">Sps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">])</span>
+			<span class="p">])</span>
+
+		<span class="k">def</span> <span class="nf">learn</span><span class="p">():</span>
+			<span class="n">Ss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">As</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+			<span class="n">Rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">Sps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+			<span class="n">H</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">Ss_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Ss</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">As_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">As</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Rs_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Rs</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Sps_shared</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">Sps</span><span class="p">)</span>
+			
+			<span class="n">costs</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="n">H</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)):</span>
+				<span class="n">costs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_core</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">costs</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">learn</span><span class="o">=</span><span class="n">learn</span></div>
+
+<div class="viewcode-block" id="ValueRLInterface.build_trainer_doubledqn"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_doubledqn">[docs]</a>	<span class="k">def</span> <span class="nf">build_trainer_doubledqn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="c1">#READ the paper first..!!</span>
+		<span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ValueRLInterface.build_trainer_doubleqlearning"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.build_trainer_doubleqlearning">[docs]</a>	<span class="k">def</span> <span class="nf">build_trainer_doubleqlearning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`build_trainer_doubleqlearning` compiles a :attr:`train_core` theano function which implements \</span>
+<span class="sd">		**Double Q-Learning**, and algorithm-specific :attr:`learn` function.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">pass</span></div>
+		
+	<span class="c1">##############################################</span>
+			
+<div class="viewcode-block" id="ValueRLInterface.start"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.start">[docs]</a>	<span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`start` runs one episode and produces one trajectory.</span>
+
+<span class="sd">		After each episode is done, it calls :attr:`learn` function to learn.</span>
+
+<span class="sd">		:returns (G, H): (Return, Horizon, cost) cost is a cost estimate for value approximation.</span>
+<span class="sd">		:rtype: (float, int, cost)</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">isStarted</span><span class="o">=</span><span class="kc">True</span>
+
+		<span class="n">startTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+		<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isOver</span><span class="p">:</span>
+				<span class="k">break</span>
+
+		<span class="n">cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">learn</span><span class="p">()</span>
+		<span class="n">endTime</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">cost</span></div>
+
+<div class="viewcode-block" id="ValueRLInterface.train"><a class="viewcode-back" href="../../../../Tetris.mods.Interfaces.html#Tetris.mods.Interfaces.RLInterface.ValueRLInterface.train">[docs]</a>	<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:meth:`train` is a top-level train function. \</span>
+<span class="sd">		Repeatedly calls :meth:`start` to produce trajectories and learn.</span>
+
+<span class="sd">		Every 100 episode, it saves history and model weights.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">historyname</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%i</span><span class="s1">x</span><span class="si">%i</span><span class="s1">.pkl&#39;</span><span class="o">%</span> \
+			<span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">historyname</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+				<span class="n">history</span> <span class="o">=</span> <span class="n">_pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="c1"># G for return, and H for horizon</span>
+			<span class="n">history</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;G&#39;</span> <span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;H&#39;</span> <span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;loss&#39;</span> <span class="p">:</span> <span class="p">[]}</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">Gs</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="s1">&#39;G&#39;</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Hs</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Costs</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">]</span>
+
+		<span class="n">episode_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;G&#39;</span><span class="p">])</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Start Value-based learning.&#39;</span><span class="p">)</span>
+		<span class="n">firsttime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+		<span class="n">starttime</span> <span class="o">=</span> <span class="n">firsttime</span>
+		<span class="n">Gs_100</span><span class="p">,</span> <span class="n">Hs_100</span><span class="p">,</span> <span class="n">costs_100</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+				<span class="n">G</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">Gs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">Hs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">Costs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
+
+				<span class="n">Gs_100</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+				<span class="n">Hs_100</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+				<span class="n">costs_100</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
+
+				<span class="n">episode_num</span> <span class="o">+=</span> <span class="mi">1</span>
+
+				<span class="k">if</span> <span class="n">episode_num</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="n">nowtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+					<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Episode #</span><span class="si">%i</span><span class="s1">. Mean G : </span><span class="si">%.2f</span><span class="s1">(</span><span class="si">%.2f</span><span class="s1">/</span><span class="si">%.2f</span><span class="s1">), Mean ticks : </span><span class="si">%.2f</span><span class="s1">(</span><span class="si">%i</span><span class="s1">/</span><span class="si">%i</span><span class="s1">). Cost : </span><span class="si">%.5f</span><span class="s1">. Took </span><span class="si">%.1f</span><span class="s1">s, elapsed </span><span class="si">%.1f</span><span class="s1">s&#39;</span>\
+						<span class="o">%</span><span class="p">(</span><span class="n">episode_num</span><span class="p">,</span> \
+						<span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Gs_100</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">Gs_100</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Gs_100</span><span class="p">),</span> \
+						<span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Hs_100</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">Hs_100</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Hs_100</span><span class="p">),</span> \
+						<span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">costs_100</span><span class="p">),</span> <span class="n">nowtime</span><span class="o">-</span><span class="n">starttime</span><span class="p">,</span> <span class="n">nowtime</span><span class="o">-</span><span class="n">firsttime</span><span class="p">))</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">machine</span><span class="o">.</span><span class="n">save_weights</span><span class="p">()</span>
+					<span class="n">starttime</span> <span class="o">=</span> <span class="n">nowtime</span>
+					<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">historyname</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+						<span class="n">_pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+					<span class="n">Gs_100</span><span class="p">,</span> <span class="n">Hs_100</span><span class="p">,</span> <span class="n">costs_100</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+		<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+			<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">historyname</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+				<span class="n">_pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
@@ -380,14 +870,11 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -403,13 +890,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">Tetris  documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Tetris  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2016, Author.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2016, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
     </div>
   </body>
 </html>
